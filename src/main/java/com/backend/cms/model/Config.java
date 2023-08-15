@@ -16,4 +16,7 @@ public class Config {
     private String id;
     private boolean isInitialized;
 
+    public Config(boolean initialized) {
+        this.isInitialized = initialized;
+    }
 }
