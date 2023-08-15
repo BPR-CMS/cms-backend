@@ -3,10 +3,12 @@ package com.backend.cms.service;
 import com.backend.cms.dto.UserDTO;
 import com.backend.cms.model.Config;
 import com.backend.cms.model.User;
+import com.backend.cms.model.UserType;
 import com.backend.cms.repository.ConfigRepository;
 import com.backend.cms.request.CreateInitAdminRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -19,6 +21,9 @@ public class AdminInitializationService {
     @Autowired
     private ConfigRepository configRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public UserDTO initializeAdmin(CreateInitAdminRequest request) {
         User user = createUserFromRequest(request);
 
@@ -26,7 +31,7 @@ public class AdminInitializationService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Admin already initialized");
         }
 
-        userService.createSuperAdmin(user);
+        createSuperAdmin(user);
         initializeAdminConfig();
 
         return UserDTO.fromUser(user);
@@ -52,6 +57,16 @@ public class AdminInitializationService {
             config.setInitialized(true);
             configRepository.save(config);
         }
+    }
+
+    public void createSuperAdmin(User user) {
+        user.setFirstName(user.getFirstName());
+        user.setLastName(user.getLastName());
+        user.setEmail(user.getEmail());
+        String encryptedPassword = passwordEncoder.encode(user.getPassword()); // Encrypt the password
+        user.setPassword(encryptedPassword);
+        user.setUserType(UserType.ADMIN);
+        userService.save(user);
     }
 
 }

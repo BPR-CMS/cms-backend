@@ -2,7 +2,6 @@ package com.backend.cms.service;
 
 import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.model.User;
-import com.backend.cms.model.UserType;
 import com.backend.cms.repository.UserRepository;
 import com.backend.cms.utils.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +33,4 @@ public class UserService {
             userRepository.save(user);
         }
     }
-
-    public void createSuperAdmin(User user) {
-        user.setPassword(user.getPassword());
-        user.setUserType(UserType.ADMIN);
-        userRepository.save(user);
-    }
-
 }
