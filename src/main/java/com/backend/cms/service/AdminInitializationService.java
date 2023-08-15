@@ -6,6 +6,7 @@ import com.backend.cms.model.User;
 import com.backend.cms.model.UserType;
 import com.backend.cms.repository.ConfigRepository;
 import com.backend.cms.request.CreateInitAdminRequest;
+import com.backend.cms.utils.InputValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,16 +26,25 @@ public class AdminInitializationService {
     private PasswordEncoder passwordEncoder;
 
     public UserDTO initializeAdmin(CreateInitAdminRequest request) {
+        validateUserInput(request);
+
         User user = createUserFromRequest(request);
 
         if (isAdminInitialized()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Admin already initialized");
         }
 
-        createSuperAdmin(user);
+        createInitialAdmin(user);
         initializeAdminConfig();
 
         return UserDTO.fromUser(user);
+    }
+
+    private void validateUserInput(CreateInitAdminRequest request) {
+        InputValidator.validateName(request.getFirstName());
+        InputValidator.validateName(request.getLastName());
+        InputValidator.validateEmail(request.getEmail());
+        InputValidator.validatePassword(request.getPassword());
     }
 
     private User createUserFromRequest(CreateInitAdminRequest request) {
@@ -59,7 +69,7 @@ public class AdminInitializationService {
         }
     }
 
-    public void createSuperAdmin(User user) {
+    public void createInitialAdmin(User user) {
         user.setFirstName(user.getFirstName());
         user.setLastName(user.getLastName());
         user.setEmail(user.getEmail());
