@@ -9,7 +9,6 @@ import com.backend.cms.request.CreateInitAdminRequest;
 import com.backend.cms.utils.InputValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,9 +20,6 @@ public class AdminInitializationService {
 
     @Autowired
     private ConfigRepository configRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     public UserDTO initializeAdmin(CreateInitAdminRequest request) {
         validateUserInput(request);
@@ -69,11 +65,19 @@ public class AdminInitializationService {
         }
     }
 
+    public void setAdminNotInitialized() {
+        Config config = configRepository.findFirstBy();
+        if (config != null) {
+            config.setInitialized(false);
+            configRepository.save(config);
+        }
+    }
+
     public void createInitialAdmin(User user) {
         user.setFirstName(user.getFirstName());
         user.setLastName(user.getLastName());
         user.setEmail(user.getEmail());
-        String encryptedPassword = passwordEncoder.encode(user.getPassword()); // Encrypt the password
+        String encryptedPassword = userService.encryptPassword(user.getPassword());
         user.setPassword(encryptedPassword);
         user.setUserType(UserType.ADMIN);
         userService.save(user);

@@ -2,6 +2,7 @@ package com.backend.cms.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -20,6 +21,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/api/v1/initialize").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/initialize/**").permitAll() // Allow GET requests for the /api/v1/initialize endpoint
+                .antMatchers(HttpMethod.PUT, "/api/v1/initialize/**").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/api/v1/initialize/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
