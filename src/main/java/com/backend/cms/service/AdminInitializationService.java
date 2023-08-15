@@ -38,7 +38,7 @@ public class AdminInitializationService {
         return user;
     }
 
-    private boolean isAdminInitialized() {
+    public boolean isAdminInitialized() {
         Config config = configRepository.findFirstBy();
         return config != null && config.isInitialized();
     }
