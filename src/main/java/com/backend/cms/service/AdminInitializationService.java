@@ -65,14 +65,6 @@ public class AdminInitializationService {
         }
     }
 
-    public void setAdminNotInitialized() {
-        Config config = configRepository.findFirstBy();
-        if (config != null) {
-            config.setInitialized(false);
-            configRepository.save(config);
-        }
-    }
-
     public void createInitialAdmin(User user) {
         user.setFirstName(user.getFirstName());
         user.setLastName(user.getLastName());

@@ -2,7 +2,6 @@ package com.backend.cms.controller;
 
 import com.backend.cms.dto.UserDTO;
 import com.backend.cms.model.User;
-import com.backend.cms.model.UserType;
 import com.backend.cms.repository.UserRepository;
 import com.backend.cms.request.CreateInitAdminRequest;
 import com.backend.cms.request.UpdateUserRequest;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/initialize")
-public class AdminInitializationController {
+public class UserController {
 
     @Autowired
     private AdminInitializationService adminInitializationService;
@@ -28,7 +27,7 @@ public class AdminInitializationController {
     @Autowired
     private UserRepository userRepository;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AdminInitializationController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -63,11 +62,6 @@ public class AdminInitializationController {
     UserDTO delete(@PathVariable("id") String id) {
         LOGGER.info("Deleting user entry with id: {}", id);
         User user = userService.findUserFailIfNotFound(id);
-        // Check if the deleted user is the admin account
-        if (user.getUserType() == UserType.ADMIN) {
-            // Set isInitialized to false in the config
-            adminInitializationService.setAdminNotInitialized();
-        }
         userRepository.delete(user);
         LOGGER.info("Deleted user entry with information: {}", user);
         return UserDTO.fromUser(user);
