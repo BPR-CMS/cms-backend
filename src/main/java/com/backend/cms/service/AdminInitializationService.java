@@ -66,10 +66,19 @@ public class AdminInitializationService {
     }
 
     public void createInitialAdmin(User user) {
-        user.setFirstName(user.getFirstName());
-        user.setLastName(user.getLastName());
-        user.setEmail(user.getEmail());
-        String encryptedPassword = userService.encryptPassword(user.getPassword());
+        // Trim and remove extra spaces from the fields
+        String trimmedFirstName = user.getFirstName().trim().replaceAll("\\s+", " ");
+        String trimmedLastName = user.getLastName().trim().replaceAll("\\s+", " ");
+        String trimmedEmail = user.getEmail().trim();
+        String trimmedPassword = user.getPassword().trim();
+
+        // Encrypt the password
+        String encryptedPassword = userService.encryptPassword(trimmedPassword);
+
+        // Set the trimmed and cleaned values
+        user.setFirstName(trimmedFirstName);
+        user.setLastName(trimmedLastName);
+        user.setEmail(trimmedEmail);
         user.setPassword(encryptedPassword);
         user.setUserType(UserType.ADMIN);
         userService.save(user);
