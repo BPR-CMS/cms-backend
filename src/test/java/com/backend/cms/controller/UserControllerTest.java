@@ -4,10 +4,8 @@ import com.backend.cms.dto.UserDTO;
 import com.backend.cms.model.User;
 import com.backend.cms.repository.UserRepository;
 import com.backend.cms.request.CreateInitAdminRequest;
-import com.backend.cms.service.AdminInitializationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,22 +39,12 @@ class UserControllerTest {
 
     @Test
     void testCreateAdmin() throws Exception {
-        // Mock the behavior of adminInitializationService.isAdminInitialized()
-        AdminInitializationService adminInitializationService = Mockito.mock(AdminInitializationService.class);
-        Mockito.when(adminInitializationService.isAdminInitialized()).thenReturn(false);
-
         CreateInitAdminRequest request = new CreateInitAdminRequest();
         // Set properties for the request object
         request.setFirstName("admin");
         request.setLastName("Loredana");
         request.setEmail("admin@gmail.com");
-        // Encode the password using the passwordEncoder
-        String expectedHash = passwordEncoder.encode("adminPassword");
-        // Truncate the encoded password to the maximum allowed length (16 characters)
-        if (expectedHash.length() > 16) {
-            expectedHash = expectedHash.substring(0, 16);
-        }
-        request.setPassword(expectedHash);
+        request.setPassword("adminPassword1@q");
 
         ObjectMapper objectMapper = new ObjectMapper();
         String requestJson = objectMapper.writeValueAsString(request);
@@ -75,7 +63,7 @@ class UserControllerTest {
             // Assert the status code
             assertEquals(HttpStatus.CREATED.value(), response.getResponse().getStatus());
 
-            // If admin was successfully created, assert other parts of the response
+            // Assert other parts of the response
             String json = response.getResponse().getContentAsString();
             UserDTO result = objectMapper.readValue(json, UserDTO.class);
 
@@ -85,9 +73,9 @@ class UserControllerTest {
             assertEquals("admin@gmail.com", result.getEmail());
 
             // Assert the hashed password
-            // Verify password match
-            assertTrue(passwordEncoder.matches(expectedHash, result.getPassword()));
-        } else { // Assert the status code (should be 400 as admin is already initialized)
+            assertTrue(passwordEncoder.matches("adminPassword1@q", result.getPassword()));
+        } else {
+            // Assert the status code (should be 400 as admin is already initialized)
             assertEquals(HttpStatus.BAD_REQUEST.value(), response.getResponse().getStatus());
 
             // Verify the error message
@@ -126,23 +114,14 @@ class UserControllerTest {
         }
     }
 
-
     @Test
     void testCheckAdminInitialized() throws Exception {
-        // Mock the behavior of adminInitializationService.isAdminInitialized()
-        AdminInitializationService adminInitializationService = Mockito.mock(AdminInitializationService.class);
-        Mockito.when(adminInitializationService.isAdminInitialized()).thenReturn(true); // Adjust as needed
-
-        // Perform the GET request
+        // First GET request when isAdminInitialized() returns true
         mvc.perform(get("/api/v1/initialize"))
                 .andExpect(status().isOk());
 
-        // Simulate the behavior when isAdminInitialized() returns false
-        Mockito.when(adminInitializationService.isAdminInitialized()).thenReturn(false);
-
-        // Perform the GET request again
+        // Second GET request when isAdminInitialized() returns false
         mvc.perform(get("/api/v1/initialize"))
                 .andExpect(status().isOk());
     }
-
 }
