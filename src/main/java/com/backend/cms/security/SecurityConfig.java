@@ -15,16 +15,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // Disable CSRF protection (Cross-Site Request Forgery)
         http.csrf().disable();
         http.cors();
-        // Authorize requests configuration
-        http
-                .authorizeRequests()
-                .antMatchers("/api/v1/initialize").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/v1/initialize/**").permitAll() // Allow GET requests for the /api/v1/initialize endpoint
-                .antMatchers(HttpMethod.PUT, "/api/v1/initialize/**").permitAll()
-                .antMatchers(HttpMethod.DELETE, "/api/v1/initialize/**").permitAll()
+
+
+        http.authorizeRequests()
+                .antMatchers("/api/v1/users/{id}").authenticated() // Require authentication for the endpoint
+                .antMatchers("/api/v1/admin").permitAll()
+                .antMatchers("/api/v1/admin/initialize").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/users/**").authenticated() // Requires authentication
+                .antMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated() // Requires authentication
+                .antMatchers(HttpMethod.DELETE, "/api/v1/users/**").authenticated() // Requires authentication
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

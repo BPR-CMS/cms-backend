@@ -1,5 +1,6 @@
 package com.backend.cms.controller;
 
+import com.backend.cms.dto.RegisterUserDTO;
 import com.backend.cms.dto.UserDTO;
 import com.backend.cms.model.User;
 import com.backend.cms.repository.UserRepository;
@@ -65,7 +66,7 @@ class UserControllerTest {
 
             // Assert other parts of the response
             String json = response.getResponse().getContentAsString();
-            UserDTO result = objectMapper.readValue(json, UserDTO.class);
+            RegisterUserDTO result = objectMapper.readValue(json, RegisterUserDTO.class);
 
             assertNotNull(result.getUserId());
             assertEquals("admin", result.getFirstName());
@@ -86,7 +87,7 @@ class UserControllerTest {
 
     @Test
     void testFindUserById() throws Exception {
-        String userId = "u7v8rr";
+        String userId = "ufdalb";
         User user = userRepository.findByUserId(userId);
 
         MvcResult response = mvc.perform(get("/api/v1/initialize/{id}", userId))
@@ -107,7 +108,6 @@ class UserControllerTest {
             assertEquals(user.getFirstName(), result.getFirstName());
             assertEquals(user.getLastName(), result.getLastName());
             assertEquals(user.getEmail(), result.getEmail());
-            assertEquals(user.getPassword(), result.getPassword());
         } else {
             // User not found, assert 404 status
             assertEquals(HttpStatus.NOT_FOUND.value(), response.getResponse().getStatus());

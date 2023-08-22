@@ -1,5 +1,6 @@
 package com.backend.cms.service;
 
+import com.backend.cms.dto.RegisterUserDTO;
 import com.backend.cms.dto.UserDTO;
 import com.backend.cms.model.Config;
 import com.backend.cms.model.User;
@@ -21,7 +22,7 @@ public class AdminInitializationService {
     @Autowired
     private ConfigRepository configRepository;
 
-    public UserDTO initializeAdmin(CreateInitAdminRequest request) {
+    public RegisterUserDTO initializeAdmin(CreateInitAdminRequest request) {
         validateUserInput(request);
 
         User user = createUserFromRequest(request);
@@ -33,7 +34,7 @@ public class AdminInitializationService {
         createInitialAdmin(user);
         initializeAdminConfig();
 
-        return UserDTO.fromUser(user);
+        return RegisterUserDTO.fromUser(user);
     }
 
     private void validateUserInput(CreateInitAdminRequest request) {
