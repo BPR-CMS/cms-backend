@@ -3,7 +3,9 @@ package com.backend.cms.controller;
 import com.backend.cms.dto.UserDTO;
 import com.backend.cms.model.User;
 import com.backend.cms.repository.UserRepository;
+import com.backend.cms.request.LoginRequest;
 import com.backend.cms.request.UpdateUserRequest;
+import com.backend.cms.service.AuthService;
 import com.backend.cms.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AuthService authService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
@@ -53,5 +58,11 @@ public class UserController {
         userRepository.delete(user);
         LOGGER.info("Deleted user entry with information: {}", user);
         return UserDTO.fromUser(user);
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public String login(@RequestBody LoginRequest loginRequest) {
+        LOGGER.info("Processing login request: {}", loginRequest);
+        return authService.login(loginRequest.getEmail(), loginRequest.getPassword());
     }
 }
