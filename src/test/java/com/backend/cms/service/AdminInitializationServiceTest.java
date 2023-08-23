@@ -1,5 +1,6 @@
 package com.backend.cms.service;
 
+import com.backend.cms.dto.RegisterUserDTO;
 import com.backend.cms.dto.UserDTO;
 import com.backend.cms.model.User;
 import com.backend.cms.repository.ConfigRepository;
@@ -35,7 +36,7 @@ class AdminInitializationServiceTest {
         User createdUser = new User();
 
         // Call the method being tested
-        UserDTO result = adminInitializationService.initializeAdmin(request);
+        RegisterUserDTO result = adminInitializationService.initializeAdmin(request);
 
         assertEquals(request.getFirstName(), result.getFirstName());
         assertEquals(request.getLastName(), result.getLastName());

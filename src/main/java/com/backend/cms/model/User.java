@@ -26,6 +26,7 @@ public class User {
     private String email;
     private String password;
     private UserType userType;
+    private String token;
 
     public User( String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
