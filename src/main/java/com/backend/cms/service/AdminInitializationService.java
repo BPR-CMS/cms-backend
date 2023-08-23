@@ -1,12 +1,12 @@
 package com.backend.cms.service;
 
 import com.backend.cms.dto.RegisterUserDTO;
-import com.backend.cms.dto.UserDTO;
 import com.backend.cms.model.Config;
 import com.backend.cms.model.User;
 import com.backend.cms.model.UserType;
 import com.backend.cms.repository.ConfigRepository;
 import com.backend.cms.request.CreateInitAdminRequest;
+import com.backend.cms.utils.FieldCleaner;
 import com.backend.cms.utils.InputValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,22 +67,12 @@ public class AdminInitializationService {
     }
 
     public void createInitialAdmin(User user) {
-        // Trim and remove extra spaces from the fields
-        String trimmedFirstName = user.getFirstName().trim().replaceAll("\\s+", " ");
-        String trimmedLastName = user.getLastName().trim().replaceAll("\\s+", " ");
-        String trimmedEmail = user.getEmail().trim();
-        String trimmedPassword = user.getPassword().trim();
-
-        // Encrypt the password
-        String encryptedPassword = userService.encryptPassword(trimmedPassword);
-
-        // Set the trimmed and cleaned values
-        user.setFirstName(trimmedFirstName);
-        user.setLastName(trimmedLastName);
-        user.setEmail(trimmedEmail);
-        user.setPassword(encryptedPassword);
-        user.setUserType(UserType.ADMIN);
-        userService.save(user);
+        // Clean and update user fields using the utility method
+        User cleanedUser = FieldCleaner.cleanUserFields(user);
+        String encryptedPassword = userService.encryptPassword(cleanedUser.getPassword());
+        cleanedUser.setPassword(encryptedPassword);
+        cleanedUser.setUserType(UserType.ADMIN);
+        userService.save(cleanedUser);
     }
 
 }

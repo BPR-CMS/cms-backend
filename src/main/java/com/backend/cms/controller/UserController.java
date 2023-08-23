@@ -40,12 +40,9 @@ public class UserController {
     UserDTO update(@PathVariable("id") String id, @RequestBody UpdateUserRequest request) {
         LOGGER.info("Updating user entry with information: {}", request);
         User user = userService.findUserFailIfNotFound(id);
-
         // Validate updated user fields
         userService.validateUserInput(request);
-
-        request.updateUser(user);
-        user.setPassword(userService.encryptPassword(request.getPassword())); // Encrypt the password
+        userService.updateUser(user, request);
         userService.save(user);
         LOGGER.info("Updated user entry with information: {}", user);
         return UserDTO.fromUser(user);

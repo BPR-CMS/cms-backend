@@ -4,6 +4,7 @@ import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.model.User;
 import com.backend.cms.repository.UserRepository;
 import com.backend.cms.request.UpdateUserRequest;
+import com.backend.cms.utils.FieldCleaner;
 import com.backend.cms.utils.Generator;
 import com.backend.cms.utils.InputValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,17 @@ public class UserService {
 
     public String encryptPassword(String password) {
         return passwordEncoder.encode(password);
+    }
+    public void updateUser(User user, UpdateUserRequest request) {
+        user.setFirstName(FieldCleaner.cleanField(request.getFirstName()));
+        user.setLastName(FieldCleaner.cleanField(request.getLastName()));
+        user.setEmail(FieldCleaner.cleanField(request.getEmail()));
+
+        String password = request.getPassword();
+        user.setPassword(encryptPassword(FieldCleaner.cleanField(password)));
+
+        // Save the updated user
+        save(user);
     }
 
     public void validateUserInput(UpdateUserRequest request) {
