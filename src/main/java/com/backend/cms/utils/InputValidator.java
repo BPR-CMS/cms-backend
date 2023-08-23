@@ -51,7 +51,7 @@ public class InputValidator {
         return name.matches(NAME_REGEX);
     }
 
-    private static boolean isValidEmail(String email) {
+    public static boolean isValidEmail(String email) {
         // Email pattern validation
         return email != null && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$");
     }
