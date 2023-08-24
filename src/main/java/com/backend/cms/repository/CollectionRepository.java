@@ -12,8 +12,12 @@ import java.util.List;
 public interface CollectionRepository extends MongoRepository<Collection, String>, QuerydslPredicateExecutor<Collection> {
 
     @Query("{'collectionId':?0}")
-    Collection findByCollectionId (String collectionId);
+    Collection findByCollectionId(String collectionId);
 
     @Query("{'userId':?0}")
     List<Collection> findAllByUserId(String userId);
+
+    @Query("{'name':?0}")
+    Collection findByName(String name);
+
 }

@@ -23,20 +23,24 @@ public class AdminInitializationService {
     private ConfigRepository configRepository;
 
     public RegisterUserDTO initializeAdmin(CreateInitAdminRequest request) {
-        validateUserInput(request);
+        try {
+            validateUserInput(request);
 
-        User user = createUserFromRequest(request);
+            User user = createUserFromRequest(request);
 
-        if (isAdminInitialized()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Admin already initialized");
+            if (isAdminInitialized()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Admin already initialized");
+            }
+
+            createInitialAdmin(user);
+            initializeAdminConfig();
+
+            return RegisterUserDTO.fromUser(user);
+        } catch (NullPointerException ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Fields cannot be null.");
         }
-
-        createInitialAdmin(user);
-        initializeAdminConfig();
-
-        return RegisterUserDTO.fromUser(user);
     }
-
+    
     private void validateUserInput(CreateInitAdminRequest request) {
         InputValidator.validateName(request.getFirstName());
         InputValidator.validateName(request.getLastName());

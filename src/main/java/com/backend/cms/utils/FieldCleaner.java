@@ -1,5 +1,6 @@
 package com.backend.cms.utils;
 
+import com.backend.cms.model.Collection;
 import com.backend.cms.model.User;
 
 
@@ -12,6 +13,12 @@ public class FieldCleaner {
         user.setEmail(cleanField(user.getEmail()));
         user.setPassword(cleanField(user.getPassword()));
         return user;
+    }
+
+    public static Collection cleanCollectionFields(Collection collection) {
+        collection.setName(cleanField(collection.getName()));
+        collection.setDescription(cleanField(collection.getDescription()));
+        return collection;
     }
 
     public static String cleanField(String field) {

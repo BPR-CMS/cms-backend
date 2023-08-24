@@ -34,7 +34,7 @@ public class CollectionController {
         Collection collection = request.toCollection();
         collection.setCollectionId(collectionService.findNewId());
         collection.setUserId(securityHelper.getCurrentUserId());
-        collectionService.save(collection);
+        collectionService.validateAndSaveCollection(collection,request);
         return CollectionDTO.fromCollection(collection);
     }
 

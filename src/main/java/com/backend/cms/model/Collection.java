@@ -21,11 +21,12 @@ public class Collection {
 
     @Indexed(unique = true)
     private String collectionId;
+    @Indexed(unique = true)
     private String name;
     private String description;
     private String userId;
 
-    public Collection( String name, String description) {
+    public Collection(String name, String description) {
         this.name = name;
         this.description = description;
     }
