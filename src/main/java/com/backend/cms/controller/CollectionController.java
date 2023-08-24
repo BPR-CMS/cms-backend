@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/api/v1/collection")
+@RequestMapping("/api/v1/collections")
 public class CollectionController {
 
     @Autowired
@@ -53,11 +53,11 @@ public class CollectionController {
                 .collect(Collectors.toList());
     }
 
-//    @RequestMapping(method = RequestMethod.GET)
-//    List<CollectionDTO> findAll() {
-//        LOGGER.info("Finding all user collections");
-//        // Get the currently authenticated user's ID
-//        List<Collection> collection = collectionService.findCollectionByUserId(securityHelper.getCurrentUserId());
-//        return collectionService.collectionToDTOs(collection);
-//    }
+    @RequestMapping(value = "/admin", method = RequestMethod.GET)
+    List<CollectionDTO> findAll() {
+        LOGGER.info("Finding all user collections");
+        // Get the currently authenticated user's ID
+        List<Collection> collection = collectionService.findCollectionByUserId(securityHelper.getCurrentUserId());
+        return collectionService.collectionToDTOs(collection);
+    }
 }
