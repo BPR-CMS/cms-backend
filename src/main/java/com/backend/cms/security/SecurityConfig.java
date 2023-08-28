@@ -42,6 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/admin").permitAll()
                 .antMatchers("/api/v1/admin/initialize").permitAll()
                 .antMatchers("/api/v1/utils/resetDatabase").permitAll()
+                .antMatchers("/api/v1/collection").authenticated()
                 .antMatchers(HttpMethod.GET, "/api/v1/users/**").authenticated() // Requires authentication
                 .antMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated() // Requires authentication
                 .antMatchers(HttpMethod.DELETE, "/api/v1/users/**").authenticated() // Requires authentication

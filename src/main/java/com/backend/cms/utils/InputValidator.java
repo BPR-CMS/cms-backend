@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 public class InputValidator {
 
     private static final String NAME_REGEX = "^[a-zA-Z\\s]{2,20}$";
-
-
     private static final String PASSWORD_REGEX = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{8,16}$";
+    private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$";
+    private static final String DESCRIPTION_REGEX = "^[a-zA-Z0-9\\s.,!?]{10,500}$";
 
 
     public static void validatePassword(String password) {
@@ -53,7 +53,19 @@ public class InputValidator {
 
     public static boolean isValidEmail(String email) {
         // Email pattern validation
-        return email != null && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$");
+        return email != null && email.matches(EMAIL_REGEX);
     }
 
+    public static void validateDescription(String description) {
+        // Remove leading and trailing white spaces
+        String trimmedDescription = description.trim();
+
+        if (!isValidDescription(trimmedDescription)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid description format. Description must be 10-200 characters long and may only contain letters, digits, spaces, and certain punctuation.");
+        }
+    }
+
+    private static boolean isValidDescription(String description) {
+        return description.matches(DESCRIPTION_REGEX);
+    }
 }
