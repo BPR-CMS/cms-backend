@@ -2,8 +2,10 @@ package com.backend.cms.service;
 
 import com.backend.cms.dto.CollectionDTO;
 import com.backend.cms.exceptions.NotFoundException;
-import com.backend.cms.model.Collection;
+import com.backend.cms.exceptions.UnsupportedContentTypeException;
+import com.backend.cms.model.*;
 import com.backend.cms.repository.CollectionRepository;
+import com.backend.cms.request.CreateAttributeRequest;
 import com.backend.cms.request.CreateCollectionRequest;
 import com.backend.cms.utils.FieldCleaner;
 import com.backend.cms.utils.Generator;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -96,4 +99,125 @@ public class CollectionService {
         InputValidator.validateName(request.getName());
         InputValidator.validateDescription(request.getDescription());
     }
+
+    public void addAttributeToCollection(String collectionId, Attribute attribute,
+                                         CreateAttributeRequest request) {
+        Optional<Collection> optionalCollection = Optional.ofNullable(collectionRepository.findByCollectionId(collectionId));
+        if (optionalCollection.isPresent()) {
+            Collection collection = optionalCollection.get();
+
+            // Set attribute-specific properties based on ContentType
+            if (attribute instanceof TextAttribute && request.getContentType() == ContentType.TEXT) {
+                setTextAttributeProperties((TextAttribute) attribute, request);
+            } else if (attribute instanceof RichTextAttribute && request.getContentType() == ContentType.RICHTEXT) {
+                setRichTextAttributeProperties((RichTextAttribute) attribute, request);
+            } else if (attribute instanceof MediaAttribute && request.getContentType() == ContentType.MEDIA) {
+                setMediaAttributeProperties((MediaAttribute) attribute, request);
+            } else if (attribute instanceof NumberAttribute && request.getContentType() == ContentType.NUMBER) {
+                setNumberAttributeProperties((NumberAttribute) attribute, request);
+            } else if (attribute instanceof DateAttribute && request.getContentType() == ContentType.DATE) {
+                setDateAttributeProperties((DateAttribute) attribute, request);
+            }
+
+            addAttributeToCollectionAndSave(collection, attribute);
+        } else {
+            throw new NotFoundException();
+        }
+    }
+
+    private void setTextAttributeProperties(TextAttribute textAttribute, CreateAttributeRequest request) {
+        textAttribute.setName(request.getName());
+        textAttribute.setType(request.getType());
+        textAttribute.setMinimumLength(request.getMinimumLength());
+        textAttribute.setMaximumLength(request.getMaximumLength());
+    }
+
+    private void setRichTextAttributeProperties(RichTextAttribute richTextAttribute, CreateAttributeRequest request) {
+        richTextAttribute.setName(request.getName());
+        richTextAttribute.setMinimumLength(request.getMinimumLength());
+        richTextAttribute.setMaximumLength(request.getMaximumLength());
+    }
+
+    private void setMediaAttributeProperties(MediaAttribute mediaAttribute, CreateAttributeRequest request) {
+        mediaAttribute.setName(request.getName());
+        mediaAttribute.setContentType(request.getContentType());
+        mediaAttribute.setRequired(request.isRequired());
+        mediaAttribute.setMediaType(request.getMediaType());
+    }
+
+    private void setNumberAttributeProperties(NumberAttribute numberAttribute, CreateAttributeRequest request) {
+        numberAttribute.setName(request.getName());
+        numberAttribute.setContentType(request.getContentType());
+        numberAttribute.setRequired(request.isRequired());
+        numberAttribute.setFormat(request.getFormat());
+        numberAttribute.setDefaultValue(request.getDefaultValue());
+        numberAttribute.setUnique(request.isUnique());
+        numberAttribute.setMinimumValue(request.getMinimumValue());
+        numberAttribute.setMaximumValue(request.getMaximumValue());
+    }
+
+    private void setDateAttributeProperties(DateAttribute dateAttribute, CreateAttributeRequest request) {
+        dateAttribute.setName(request.getName());
+        dateAttribute.setContentType(request.getContentType());
+        dateAttribute.setRequired(request.isRequired());
+        dateAttribute.setDateType(request.getDateType());
+    }
+
+    private void addAttributeToCollectionAndSave(Collection collection, Attribute attribute) {
+        collection.getAttributes().add(attribute);
+        collectionRepository.save(collection);
+    }
+
+    public Attribute createAttributeInstance(CreateAttributeRequest request) {
+        ContentType contentType = request.getContentType();
+
+        switch (contentType) {
+            case TEXT:
+                return AttributeFactory.createTextAttribute(
+                        request.getName(),
+                        contentType,
+                        request.isRequired(),
+                        request.getMinimumLength(),
+                        request.getMaximumLength(),
+                        request.getType());
+
+            case RICHTEXT:
+                return AttributeFactory.createRichTextAttribute(
+                        request.getName(),
+                        contentType,
+                        request.isRequired(),
+                        request.getMinimumLength(),
+                        request.getMaximumLength());
+
+            case MEDIA:
+                return AttributeFactory.createMediaAttribute(
+                        request.getName(),
+                        contentType,
+                        request.isRequired(),
+                        request.getMediaType());
+
+            case NUMBER:
+                return AttributeFactory.createNumberAttribute(
+                        request.getName(),
+                        contentType,
+                        request.isRequired(),
+                        request.getFormat(),
+                        request.getDefaultValue(),
+                        request.isUnique(),
+                        request.getMinimumValue(),
+                        request.getMaximumValue());
+
+            case DATE:
+                return AttributeFactory.createDateAttribute(
+                        request.getName(),
+                        contentType,
+                        request.isRequired(),
+                        request.getDateType());
+
+            default:
+                throw new UnsupportedContentTypeException();
+        }
+    }
+
+
 }
