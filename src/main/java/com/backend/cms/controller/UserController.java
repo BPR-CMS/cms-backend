@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    UserDTO update(@PathVariable("id") String id, @RequestBody UpdateUserRequest request) {
+    public UserDTO update(@PathVariable("id") String id, @RequestBody UpdateUserRequest request) {
         LOGGER.info("Updating user entry with information: {}", request);
         User user = userService.findUserFailIfNotFound(id);
         // Validate updated user fields
@@ -49,7 +49,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    UserDTO delete(@PathVariable("id") String id) {
+    public UserDTO delete(@PathVariable("id") String id) {
         LOGGER.info("Deleting user entry with id: {}", id);
         User user = userService.findUserFailIfNotFound(id);
         userRepository.delete(user);

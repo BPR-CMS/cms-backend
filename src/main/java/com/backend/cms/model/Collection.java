@@ -9,6 +9,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Document(collection = "collection-type")
 @Data
@@ -25,6 +28,7 @@ public class Collection {
     private String name;
     private String description;
     private String userId;
+    private List<Attribute> attributes = new ArrayList<>();
 
     public Collection(String name, String description) {
         this.name = name;
