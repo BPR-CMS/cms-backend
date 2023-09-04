@@ -5,11 +5,12 @@ import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.exceptions.UnsupportedContentTypeException;
 import com.backend.cms.model.*;
 import com.backend.cms.repository.CollectionRepository;
-import com.backend.cms.request.CreateAttributeRequest;
-import com.backend.cms.request.CreateCollectionRequest;
+import com.backend.cms.request.*;
 import com.backend.cms.utils.FieldCleaner;
 import com.backend.cms.utils.Generator;
 import com.backend.cms.utils.InputValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class CollectionService {
 
     @Autowired
     private CollectionRepository collectionRepository;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CollectionService.class);
+
 
     public Collection findCollectionFailIfNotFound(String id) {
         Collection collection = collectionRepository.findByCollectionId(id);
@@ -135,7 +139,7 @@ public class CollectionService {
     private void setRichTextAttributeProperties(RichTextAttribute richTextAttribute, CreateAttributeRequest request) {
         richTextAttribute.setName(request.getName());
         richTextAttribute.setMinimumLength(request.getMinimumLength());
-        richTextAttribute.setMaximumLength(request.getMaximumLength());
+        richTextAttribute.setMaximumLength(request.getMaximumRichTextLength());
     }
 
     private void setMediaAttributeProperties(MediaAttribute mediaAttribute, CreateAttributeRequest request) {
@@ -187,7 +191,7 @@ public class CollectionService {
                         contentType,
                         request.isRequired(),
                         request.getMinimumLength(),
-                        request.getMaximumLength());
+                        request.getMaximumRichTextLength());
 
             case MEDIA:
                 return AttributeFactory.createMediaAttribute(
@@ -218,6 +222,4 @@ public class CollectionService {
                 throw new UnsupportedContentTypeException();
         }
     }
-
-
 }

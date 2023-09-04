@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,8 +68,8 @@ public class CollectionController {
     @RequestMapping(value = "/{collectionId}/attributes", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Attribute> addAttribute(
-            @PathVariable String collectionId,
-            @RequestBody CreateAttributeRequest request) {
+            @PathVariable String collectionId, @Valid
+    @RequestBody CreateAttributeRequest request) {
         LOGGER.info("Adding attribute to a collection entry with information: {}", request);
         Attribute attribute = collectionService.createAttributeInstance(request);
 
@@ -76,7 +77,6 @@ public class CollectionController {
             collectionService.addAttributeToCollection(collectionId, attribute, request);
             return ResponseEntity.ok(attribute);
         } else {
-            // Handle unsupported content types
             return ResponseEntity.badRequest().build();
         }
     }
