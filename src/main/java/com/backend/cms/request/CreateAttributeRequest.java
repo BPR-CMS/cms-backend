@@ -43,4 +43,9 @@ public class CreateAttributeRequest {
     private Integer maximumValue;
 
     private DateType dateType;
+
+    public void setName(String name) {
+        this.name =  name != null ? name.trim() : null;
+    }
+
 }

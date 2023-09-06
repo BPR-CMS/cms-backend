@@ -32,12 +32,12 @@ public class CollectionController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public CollectionDTO create(@RequestBody CreateCollectionRequest request) {
+    public CollectionDTO create(@Valid @RequestBody CreateCollectionRequest request) {
         LOGGER.info("Creating a collection entry with information: {}", request);
         Collection collection = request.toCollection();
         collection.setCollectionId(collectionService.findNewId());
         collection.setUserId(securityHelper.getCurrentUserId());
-        collectionService.validateAndSaveCollection(collection, request);
+        collectionService.saveCollection(collection, request);
         return CollectionDTO.fromCollection(collection);
     }
 

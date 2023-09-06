@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/v1/users")
@@ -37,11 +39,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public UserDTO update(@PathVariable("id") String id, @RequestBody UpdateUserRequest request) {
+    public UserDTO update(@PathVariable("id") String id, @Valid @RequestBody UpdateUserRequest request) {
         LOGGER.info("Updating user entry with information: {}", request);
         User user = userService.findUserFailIfNotFound(id);
-        // Validate updated user fields
-        userService.validateUserInput(request);
         userService.updateUser(user, request);
         userService.save(user);
         LOGGER.info("Updated user entry with information: {}", user);

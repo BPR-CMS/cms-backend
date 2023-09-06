@@ -7,7 +7,6 @@ import com.backend.cms.model.UserType;
 import com.backend.cms.repository.ConfigRepository;
 import com.backend.cms.request.CreateInitAdminRequest;
 import com.backend.cms.utils.FieldCleaner;
-import com.backend.cms.utils.InputValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,8 +22,6 @@ public class AdminInitializationService {
     private ConfigRepository configRepository;
 
     public RegisterUserDTO initializeAdmin(CreateInitAdminRequest request) {
-        try {
-            validateUserInput(request);
 
             User user = createUserFromRequest(request);
 
@@ -36,16 +33,6 @@ public class AdminInitializationService {
             initializeAdminConfig();
 
             return RegisterUserDTO.fromUser(user);
-        } catch (NullPointerException ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Fields cannot be null.");
-        }
-    }
-    
-    private void validateUserInput(CreateInitAdminRequest request) {
-        InputValidator.validateName(request.getFirstName());
-        InputValidator.validateName(request.getLastName());
-        InputValidator.validateEmail(request.getEmail());
-        InputValidator.validatePassword(request.getPassword());
     }
 
     private User createUserFromRequest(CreateInitAdminRequest request) {

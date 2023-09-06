@@ -8,7 +8,6 @@ import com.backend.cms.repository.CollectionRepository;
 import com.backend.cms.request.*;
 import com.backend.cms.utils.FieldCleaner;
 import com.backend.cms.utils.Generator;
-import com.backend.cms.utils.InputValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,10 +61,9 @@ public class CollectionService {
         return collection.stream().map(CollectionDTO::fromCollection).collect(Collectors.toList());
     }
 
-    public void validateAndSaveCollection(Collection collection, CreateCollectionRequest request) {
+    public void saveCollection(Collection collection, CreateCollectionRequest request) {
 
         try {
-            validateUserInput(request);
 
             Collection cleanedCollection = cleanCollectionFields(collection);
             String cleanedName = cleanCollectionName(request.getName());
@@ -76,7 +74,7 @@ public class CollectionService {
             save(cleanedCollection);
         } catch (NullPointerException ex) {
             // Handle the case where the name is null
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Fields cannot be null.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fields cannot be null.");
         }
     }
 
@@ -85,11 +83,9 @@ public class CollectionService {
     }
 
     private String cleanCollectionName(String name) {
-        if (name != null) {
-            return name.trim();
-        }
-        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Collection name cannot be null.");
+        return (name != null) ? name.trim() : null;
     }
+
 
     private void checkForDuplicateName(String name) {
         Collection existingCollection = collectionRepository.findByName(name);
@@ -99,9 +95,17 @@ public class CollectionService {
         }
     }
 
-    private void validateUserInput(CreateCollectionRequest request) {
-        InputValidator.validateName(request.getName());
-        InputValidator.validateDescription(request.getDescription());
+    private void checkForDuplicateAttributeName(String collectionId, String attributeName) {
+        Collection existingCollection = collectionRepository.findByCollectionId(collectionId);
+
+        if (existingCollection != null) {
+            // Iterate through the attributes of the existing collection
+            for (Attribute existingAttribute : existingCollection.getAttributes()) {
+                if (existingAttribute.getName().equals(attributeName)) {
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "An attribute with the same name already exists in the collection.");
+                }
+            }
+        }
     }
 
     public void addAttributeToCollection(String collectionId, Attribute attribute,
@@ -109,7 +113,7 @@ public class CollectionService {
         Optional<Collection> optionalCollection = Optional.ofNullable(collectionRepository.findByCollectionId(collectionId));
         if (optionalCollection.isPresent()) {
             Collection collection = optionalCollection.get();
-
+checkForDuplicateAttributeName(collectionId,attribute.getName());
             // Set attribute-specific properties based on ContentType
             if (attribute instanceof TextAttribute && request.getContentType() == ContentType.TEXT) {
                 setTextAttributeProperties((TextAttribute) attribute, request);
@@ -130,27 +134,27 @@ public class CollectionService {
     }
 
     private void setTextAttributeProperties(TextAttribute textAttribute, CreateAttributeRequest request) {
-        textAttribute.setName(request.getName());
+        textAttribute.setName(FieldCleaner.cleanField(request.getName()));
         textAttribute.setType(request.getType());
         textAttribute.setMinimumLength(request.getMinimumLength());
         textAttribute.setMaximumLength(request.getMaximumLength());
     }
 
     private void setRichTextAttributeProperties(RichTextAttribute richTextAttribute, CreateAttributeRequest request) {
-        richTextAttribute.setName(request.getName());
+        richTextAttribute.setName(FieldCleaner.cleanField(request.getName()));
         richTextAttribute.setMinimumLength(request.getMinimumLength());
         richTextAttribute.setMaximumLength(request.getMaximumRichTextLength());
     }
 
     private void setMediaAttributeProperties(MediaAttribute mediaAttribute, CreateAttributeRequest request) {
-        mediaAttribute.setName(request.getName());
+        mediaAttribute.setName(FieldCleaner.cleanField(request.getName()));
         mediaAttribute.setContentType(request.getContentType());
         mediaAttribute.setRequired(request.isRequired());
         mediaAttribute.setMediaType(request.getMediaType());
     }
 
     private void setNumberAttributeProperties(NumberAttribute numberAttribute, CreateAttributeRequest request) {
-        numberAttribute.setName(request.getName());
+        numberAttribute.setName(FieldCleaner.cleanField(request.getName()));
         numberAttribute.setContentType(request.getContentType());
         numberAttribute.setRequired(request.isRequired());
         numberAttribute.setFormat(request.getFormat());
@@ -161,7 +165,7 @@ public class CollectionService {
     }
 
     private void setDateAttributeProperties(DateAttribute dateAttribute, CreateAttributeRequest request) {
-        dateAttribute.setName(request.getName());
+        dateAttribute.setName(FieldCleaner.cleanField(request.getName()));
         dateAttribute.setContentType(request.getContentType());
         dateAttribute.setRequired(request.isRequired());
         dateAttribute.setDateType(request.getDateType());
