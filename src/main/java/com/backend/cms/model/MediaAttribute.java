@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 public class MediaAttribute extends Attribute {
     private MediaType mediaType;
 
-    public MediaAttribute(String name, ContentType contentType, boolean required, MediaType mediaType) {
-        super(name, contentType, required);
+    public MediaAttribute(String attributeId, String name, ContentType contentType, boolean required, MediaType mediaType) {
+        super(attributeId, name, contentType, required);
         this.mediaType = mediaType;
     }
 }

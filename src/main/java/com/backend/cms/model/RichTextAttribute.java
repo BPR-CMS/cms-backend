@@ -11,8 +11,8 @@ public class RichTextAttribute extends Attribute {
     private int minimumLength;
     private int maximumLength;
 
-    public RichTextAttribute(String name, ContentType contentType, boolean required, int minimumLength, int maximumLength) {
-        super(name, contentType, required);
+    public RichTextAttribute(String attributeId, String name, ContentType contentType, boolean required, int minimumLength, int maximumLength) {
+        super(attributeId, name, contentType, required);
         this.minimumLength = minimumLength;
         this.maximumLength = maximumLength;
     }

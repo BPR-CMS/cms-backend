@@ -182,6 +182,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
         switch (contentType) {
             case TEXT:
                 return AttributeFactory.createTextAttribute(
+                        Generator.generateId("a"),
                         request.getName(),
                         contentType,
                         request.isRequired(),
@@ -191,6 +192,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
 
             case RICHTEXT:
                 return AttributeFactory.createRichTextAttribute(
+                        Generator.generateId("a"),
                         request.getName(),
                         contentType,
                         request.isRequired(),
@@ -199,6 +201,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
 
             case MEDIA:
                 return AttributeFactory.createMediaAttribute(
+                        Generator.generateId("a"),
                         request.getName(),
                         contentType,
                         request.isRequired(),
@@ -206,6 +209,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
 
             case NUMBER:
                 return AttributeFactory.createNumberAttribute(
+                        Generator.generateId("a"),
                         request.getName(),
                         contentType,
                         request.isRequired(),
@@ -217,6 +221,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
 
             case DATE:
                 return AttributeFactory.createDateAttribute(
+                        Generator.generateId("a"),
                         request.getName(),
                         contentType,
                         request.isRequired(),

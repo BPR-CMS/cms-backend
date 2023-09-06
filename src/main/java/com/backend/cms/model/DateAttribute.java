@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 public class DateAttribute extends Attribute {
     private DateType dateType;
 
-    public DateAttribute(String name, ContentType contentType, boolean required, DateType dateType) {
-        super(name, contentType, required);
+    public DateAttribute(String attributeId, String name, ContentType contentType, boolean required, DateType dateType) {
+        super(attributeId, name, contentType, required);
         this.dateType = dateType;
     }
 
