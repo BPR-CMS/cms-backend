@@ -78,40 +78,29 @@ class CollectionControllerTest {
 
     @Test
     void testCreateCollectionUnauthorized() throws Exception {
-        System.out.println("Running testCreateCollectionUnauthorized...");
-
         // Test case: Without Authorization token (401 Unauthorized)
         MvcResult result = mvc.perform(
                         MockMvcRequestBuilders.post("/api/v1/collections")
                                 .contentType("application/json")
                                 .content(requestJson))
                 .andReturn();
-        System.out.println("response: " + result.getResponse().getContentAsString());
         int actualStatusCode = result.getResponse().getStatus();
         int expectedStatusCode = HttpStatus.UNAUTHORIZED.value();
         assertEquals(expectedStatusCode, actualStatusCode);
-
-        System.out.println("testCreateCollectionUnauthorized completed. Actual status code: " + actualStatusCode);
     }
 
     @Test
     void testCreateCollectionEmptyBody() throws Exception {
-        System.out.println("Running testCreateCollectionEmptyBody...");
-
         // Test case: With Authorization token and empty body (500 Internal Server Error)
         MvcResult result = mvc.perform(
                         MockMvcRequestBuilders.post("/api/v1/collections")
                                 .header("Authorization", "Bearer " + token)
                                 .contentType("application/json"))
                 .andReturn();
-        System.out.println("response: " + result.getResponse().getContentAsString());
         int actualStatusCode = result.getResponse().getStatus();
         int expectedStatusCode = HttpStatus.BAD_REQUEST.value();
-        System.out.println("status: " + actualStatusCode);
 
         assertEquals(expectedStatusCode, actualStatusCode);
-
-        System.out.println("testCreateCollectionEmptyBody completed. Actual status code: " + actualStatusCode);
     }
 
 
@@ -125,7 +114,7 @@ class CollectionControllerTest {
         mockCollection.setCollectionId("mockCollectionId");
 
         // Mock the behavior of collectionService.validateAndSaveCollection()
-        doNothing().when(collectionService).validateAndSaveCollection(any(), any());
+        doNothing().when(collectionService).saveCollection(any(), any());
 
         // Test case: With Authorization token and valid body (201 Created)
         MvcResult validResponse = mvc.perform(
@@ -134,7 +123,6 @@ class CollectionControllerTest {
                                 .contentType("application/json")
                                 .content(requestJson))
                 .andReturn();
-        System.out.println("response: " + validResponse.getResponse().getContentAsString());
         // Assert the status code
         assertEquals(HttpStatus.CREATED.value(), validResponse.getResponse().getStatus());
 
@@ -160,11 +148,9 @@ class CollectionControllerTest {
                         MockMvcRequestBuilders.get("/api/v1/collections/{id}", mockCollectionId)
                                 .header("Authorization", "Bearer " + token))
                 .andReturn();
-        System.out.println("response: " + response.getResponse().getContentAsString());
 
         // Retrieve the actual status code from the response
         int actualStatusCode = response.getResponse().getStatus();
-        System.out.println("status: " + actualStatusCode);
         // Assert the status code
         assertEquals(HttpStatus.OK.value(), actualStatusCode);
 
@@ -182,12 +168,117 @@ class CollectionControllerTest {
                         MockMvcRequestBuilders.get("/api/v1/collections/{id}", mockCollectionId)
                                 .header("Authorization", "Bearer " + token))
                 .andReturn();
-        System.out.println("response: " + response.getResponse().getContentAsString());
         // Retrieve the actual status code from the response
         int actualStatusCode = response.getResponse().getStatus();
-        System.out.println("status: " + actualStatusCode);
 
         // Assert the status code
         assertEquals(HttpStatus.NOT_FOUND.value(), actualStatusCode);
+    }
+
+    @Test
+    void testCreateCollectionInvalidShortName() throws Exception {
+        CreateCollectionRequest request = new CreateCollectionRequest();
+        // Invalid name
+        request.setName("T");
+        request.setDescription("description");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String invalidNameRequestJson = objectMapper.writeValueAsString(request);
+
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections")
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(invalidNameRequestJson))
+                .andReturn();
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.BAD_REQUEST.value();
+
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+    @Test
+    void testCreateCollectionInvalidLongName() throws Exception {
+        CreateCollectionRequest request = new CreateCollectionRequest();
+        // Invalid name
+        request.setName("TestTestTestTestTestTestTestTest");
+        request.setDescription("description");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String invalidNameRequestJson = objectMapper.writeValueAsString(request);
+
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections")
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(invalidNameRequestJson))
+                .andReturn();
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.BAD_REQUEST.value();
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+    @Test
+    void testCreateCollectionInvalidShortDescription() throws Exception {
+        CreateCollectionRequest request = new CreateCollectionRequest();
+        request.setName("Test");
+        request.setDescription("d");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String invalidNameRequestJson = objectMapper.writeValueAsString(request);
+
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections")
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(invalidNameRequestJson))
+                .andReturn();
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.BAD_REQUEST.value();
+
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+
+    @Test
+    void testCreateCollectionWithNullName() throws Exception {
+        CreateCollectionRequest request = new CreateCollectionRequest();
+        request.setName(null);
+        request.setDescription("d");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String invalidNameRequestJson = objectMapper.writeValueAsString(request);
+
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections")
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(invalidNameRequestJson))
+                .andReturn();
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.BAD_REQUEST.value();
+
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+    @Test
+    void testCreateCollectionWithNullDescription() throws Exception {
+        CreateCollectionRequest request = new CreateCollectionRequest();
+        request.setName("Test");
+        request.setDescription(null);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String invalidNameRequestJson = objectMapper.writeValueAsString(request);
+
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections")
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(invalidNameRequestJson))
+                .andReturn();
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.BAD_REQUEST.value();
+
+        assertEquals(expectedStatusCode, actualStatusCode);
     }
 }

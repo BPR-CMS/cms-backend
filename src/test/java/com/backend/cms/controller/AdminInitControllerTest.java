@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -142,4 +143,202 @@ class AdminInitControllerTest {
         mvc.perform(get("/api/v1/admin"))
                 .andExpect(status().isOk());
     }
+    @Test
+    void testCreateAdmin_InvalidShortFirstName() throws Exception {
+        // Mocking the behavior of adminInitializationService.isAdminInitialized()
+        when(adminInitializationService.isAdminInitialized()).thenReturn(false);
+
+        CreateInitAdminRequest request = new CreateInitAdminRequest();
+        // Set properties for the request object
+        // Invalid first name
+        request.setFirstName("A");
+        request.setLastName("Loredana");
+        request.setEmail("admin@gmail.com");
+        request.setPassword("adminPassword1@q");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request and expect a BAD_REQUEST status
+        mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/admin/initialize")
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+    }
+
+    @Test
+    void testCreateAdmin_InvalidShortLastName() throws Exception {
+        // Mocking the behavior of adminInitializationService.isAdminInitialized()
+        when(adminInitializationService.isAdminInitialized()).thenReturn(false);
+
+        CreateInitAdminRequest request = new CreateInitAdminRequest();
+        // Set properties for the request object
+        request.setFirstName("Admin");
+        // Invalid last name
+        request.setLastName("L");
+        request.setEmail("admin@gmail.com");
+        request.setPassword("adminPassword1@q");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request and expect a BAD_REQUEST status
+        mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/admin/initialize")
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+    }
+    @Test
+    void testCreateAdmin_InvalidLongFirstName() throws Exception {
+        // Mocking the behavior of adminInitializationService.isAdminInitialized()
+        when(adminInitializationService.isAdminInitialized()).thenReturn(false);
+
+        CreateInitAdminRequest request = new CreateInitAdminRequest();
+        // Set properties for the request object
+        // Invalid first name
+        request.setFirstName("ThisIsAnInvalidNameTest");
+        request.setLastName("This");
+        request.setEmail("admin@gmail.com");
+        request.setPassword("adminPassword1@q");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request and expect a BAD_REQUEST status
+        mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/admin/initialize")
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+    }
+    @Test
+    void testCreateAdmin_InvalidLongLastName() throws Exception {
+        // Mocking the behavior of adminInitializationService.isAdminInitialized()
+        when(adminInitializationService.isAdminInitialized()).thenReturn(false);
+
+        CreateInitAdminRequest request = new CreateInitAdminRequest();
+        // Set properties for the request object
+        request.setFirstName("admin");
+        // Invalid last name
+        request.setLastName("ThisIsAnInvalidNameTest");
+        request.setEmail("admin@gmail.com");
+        request.setPassword("adminPassword1@q");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request and expect a BAD_REQUEST status
+        mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/admin/initialize")
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+    }
+
+    @Test
+    void testCreateAdmin_InvalidEmail() throws Exception {
+        // Mocking the behavior of adminInitializationService.isAdminInitialized()
+        when(adminInitializationService.isAdminInitialized()).thenReturn(false);
+
+        CreateInitAdminRequest request = new CreateInitAdminRequest();
+        // Set properties for the request object
+        request.setFirstName("admin");
+        request.setLastName("Loredana");
+        // Invalid email
+        request.setEmail("admin@gmail");
+        request.setPassword("adminPassword1@q");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request and expect a BAD_REQUEST status
+        mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/admin/initialize")
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+    }
+
+    @Test
+    void testCreateAdmin_InvalidShortPassword() throws Exception {
+        // Mocking the behavior of adminInitializationService.isAdminInitialized()
+        when(adminInitializationService.isAdminInitialized()).thenReturn(false);
+
+        CreateInitAdminRequest request = new CreateInitAdminRequest();
+        // Set properties for the request object
+        request.setFirstName("admin");
+        request.setLastName("Loredana");
+        request.setEmail("admin@gmail.com");
+        // Invalid password
+        request.setPassword("aP1@q");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request and expect a BAD_REQUEST status
+        mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/admin/initialize")
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+    }
+
+    @Test
+    void testCreateAdmin_InvalidLongPassword() throws Exception {
+        // Mocking the behavior of adminInitializationService.isAdminInitialized()
+        when(adminInitializationService.isAdminInitialized()).thenReturn(false);
+
+        CreateInitAdminRequest request = new CreateInitAdminRequest();
+        // Set properties for the request object
+        request.setFirstName("admin");
+        request.setLastName("Loredana");
+        request.setEmail("admin@gmail.com");
+        // Invalid password
+        request.setPassword("adminPassword1@qaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request and expect a BAD_REQUEST status
+        mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/admin/initialize")
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+    }
+
+    @Test
+    void testCreateAdmin_InvalidEmptyInput() throws Exception {
+        // Mocking the behavior of adminInitializationService.isAdminInitialized()
+        when(adminInitializationService.isAdminInitialized()).thenReturn(false);
+
+        CreateInitAdminRequest request = new CreateInitAdminRequest();
+        // Set properties for the request object
+        request.setFirstName("");
+        request.setLastName("");
+        request.setEmail("");
+        // Invalid password
+        request.setPassword("");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request and expect a BAD_REQUEST status
+        mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/admin/initialize")
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+    }
+
 }

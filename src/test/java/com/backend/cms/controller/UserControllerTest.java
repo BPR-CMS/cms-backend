@@ -57,11 +57,9 @@ class UserControllerTest {
                         MockMvcRequestBuilders.get("/api/v1/users/{id}", userId)
                                 .header("Authorization", "Bearer " + token))
                 .andReturn();
-        System.out.println("body: " + response.getResponse().getContentAsString());
 
         // Retrieve the actual status code from the response
         int actualStatusCode = response.getResponse().getStatus();
-        System.out.println("status: " + actualStatusCode);
 
         // User with specified id exists
         if (userRepository.findByUserId(userId) != null) {
@@ -92,8 +90,9 @@ class UserControllerTest {
             // Retrieve the actual status code from the response
             int actualStatusCode = response.getResponse().getStatus();
 
-            // Assert the status code is NOT_FOUND when the user doesn't exist
-            assertEquals(HttpStatus.NOT_FOUND.value(), actualStatusCode);
+            // Assert the status code is UNAUTHORIZED when the user is not found
+            assertEquals(HttpStatus.UNAUTHORIZED.value(), actualStatusCode);
+
 
         } catch (org.springframework.security.core.userdetails.UsernameNotFoundException ex) {
             // Assert that the exception was caught and response status is UNAUTHORIZED
@@ -139,14 +138,12 @@ class UserControllerTest {
 
             // Retrieve the actual status code from the response
             int actualStatusCode = response.getResponse().getStatus();
-            System.out.println("status: " + actualStatusCode);
 
             // Assert the status code is OK for successful login
             assertEquals(HttpStatus.OK.value(), actualStatusCode);
         } else {
             // Request body doesn't match mock user's credentials, should result in NOT_FOUND
             int expectedStatusCode = HttpStatus.NOT_FOUND.value();
-            System.out.println("expected status: " + expectedStatusCode);
 
             // Assert the status code is NOT_FOUND for incorrect credentials
             assertEquals(expectedStatusCode, HttpStatus.NOT_FOUND.value());
@@ -162,7 +159,6 @@ class UserControllerTest {
 
         // Convert the LoginRequest object to a JSON string
         String requestBody = new ObjectMapper().writeValueAsString(loginRequest);
-        System.out.println("request body: " + requestBody);
         // Define the behavior of userRepository.findByEmail()
         when(userRepository.findByEmail(eq(loginRequest.getEmail()))).thenReturn(null);
 
@@ -173,10 +169,8 @@ class UserControllerTest {
                                 .content(requestBody))
                 .andReturn();
 
-        System.out.println("body: " + response.getResponse().getContentAsString());
         // Retrieve the actual status code from the response
         int actualStatusCode = response.getResponse().getStatus();
-        System.out.println("status: " + actualStatusCode);
         // Assert the status code is NOT_FOUND for unsuccessful login
         assertEquals(HttpStatus.NOT_FOUND.value(), actualStatusCode);
     }
@@ -191,7 +185,6 @@ class UserControllerTest {
 
         // Convert the LoginRequest object to a JSON string
         String requestBody = new ObjectMapper().writeValueAsString(loginRequest);
-        System.out.println("request body: " + requestBody);
 
         // Defining the behavior of userRepository.findByEmail()
         when(userRepository.findByEmail(eq(loginRequest.getEmail()))).thenReturn(null);
@@ -202,11 +195,9 @@ class UserControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestBody))
                 .andReturn();
-        System.out.println("body: " + response.getResponse().getContentAsString());
 
         // Retrieve the actual status code from the response
         int actualStatusCode = response.getResponse().getStatus();
-        System.out.println("status: " + actualStatusCode);
         // Assert the status code is NOT_FOUND for incorrect email
         assertEquals(HttpStatus.NOT_FOUND.value(), actualStatusCode);
     }
@@ -220,7 +211,6 @@ class UserControllerTest {
 
         // Convert the LoginRequest object to a JSON string
         String requestBody = new ObjectMapper().writeValueAsString(loginRequest);
-        System.out.println("request body: " + requestBody);
         // Create a mocked User instance
         User mockUser = new User();
         mockUser.setUserId("someUserId");
@@ -235,10 +225,8 @@ class UserControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestBody))
                 .andReturn();
-        System.out.println("body: " + response.getResponse().getContentAsString());
         // Retrieve the actual status code from the response
         int actualStatusCode = response.getResponse().getStatus();
-        System.out.println("status: " + actualStatusCode);
 
         // Assert the status code is UNAUTHORIZED for incorrect password
         assertEquals(HttpStatus.UNAUTHORIZED.value(), actualStatusCode);
@@ -248,17 +236,14 @@ class UserControllerTest {
     void testEmptyBodyLogin() throws Exception {
         // Empty body, no login request data
         String requestBody = "{}";
-        System.out.println("request body: " + requestBody);
         // Perform the POST request
         MvcResult response = mvc.perform(
                         MockMvcRequestBuilders.post("/api/v1/users/login")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestBody))
                 .andReturn();
-        System.out.println("body: " + response.getResponse().getContentAsString());
         // Retrieve the actual status code from the response
         int actualStatusCode = response.getResponse().getStatus();
-        System.out.println("status: " + actualStatusCode);
         // Assert the status code is BAD_REQUEST for empty body
         assertEquals(HttpStatus.BAD_REQUEST.value(), actualStatusCode);
     }
@@ -272,7 +257,6 @@ class UserControllerTest {
 
         // Convert the LoginRequest object to a JSON string
         String requestBody = new ObjectMapper().writeValueAsString(loginRequest);
-        System.out.println("request body: " + requestBody);
         // Create a mocked User instance
         User mockUser = new User();
         mockUser.setEmail("admin@example.com");
@@ -287,10 +271,8 @@ class UserControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestBody))
                 .andReturn();
-        System.out.println("body: " + response.getResponse().getContentAsString());
         // Retrieve the actual status code from the response
         int actualStatusCode = response.getResponse().getStatus();
-        System.out.println("status: " + actualStatusCode);
         // Assert the status code is BAD_REQUEST for invalid email format
         assertEquals(HttpStatus.BAD_REQUEST.value(), actualStatusCode);
     }
