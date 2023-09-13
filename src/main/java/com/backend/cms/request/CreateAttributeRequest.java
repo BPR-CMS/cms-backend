@@ -48,4 +48,23 @@ public class CreateAttributeRequest {
         this.name =  name != null ? name.trim() : null;
     }
 
+    public Integer getMinimumLength() {
+        return (minimumLength != null) ? minimumLength : 0;
+    }
+
+    public Integer getMaximumLength() {
+        return (maximumLength != null) ? maximumLength : 0;
+    }
+
+    public Integer getMaximumRichTextLength() {
+        return (maximumRichTextLength != null) ? maximumRichTextLength : 0;
+    }
+
+    public Integer getMinimumValue() {
+        return (minimumValue != null) ? minimumValue : 0;
+    }
+
+    public Integer getMaximumValue() {
+        return (maximumValue != null) ? maximumValue : 0;
+    }
 }
