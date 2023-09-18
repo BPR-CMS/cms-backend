@@ -181,6 +181,10 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
 
         switch (contentType) {
             case TEXT:
+                TextType textType = request.getTextType();
+                if (textType == null) {
+                    throw new IllegalArgumentException("textType is required for TextAttribute");
+                }
                 return AttributeFactory.createTextAttribute(
                         Generator.generateId("a"),
                         request.getName(),
@@ -189,7 +193,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
                         request.getMinimumLength() != null ? request.getMinimumLength() : 0,
                         request.getMaximumLength() != null ? request.getMaximumLength() : 0,
                         request.isUnique(),
-                        request.getTextType(),
+                        textType,
                         request.getDefaultValue());
 
             case RICHTEXT:
@@ -203,32 +207,44 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
                         request.getDefaultValue());
 
             case MEDIA:
+                MediaType mediaType = request.getMediaType();
+                if (mediaType == null) {
+                    throw new IllegalArgumentException("mediaType is required for MediaAttribute");
+                }
                 return AttributeFactory.createMediaAttribute(
                         Generator.generateId("a"),
                         request.getName(),
                         contentType,
                         request.isRequired(),
-                        request.getMediaType());
+                        mediaType);
 
             case NUMBER:
+                FormatType formatType = request.getFormatType();
+                if (formatType == null) {
+                    throw new IllegalArgumentException("formatType is required for NumberAttribute");
+                }
                 return AttributeFactory.createNumberAttribute(
                         Generator.generateId("a"),
                         request.getName(),
                         contentType,
                         request.isRequired(),
-                        request.getFormatType(),
+                        formatType,
                         request.getDefaultValue(),
                         request.isUnique(),
                         request.getMinimumValue() != null ? request.getMinimumValue() : 0,
                         request.getMaximumValue() != null ? request.getMaximumValue() : 0);
 
             case DATE:
+                DateType dateType = request.getDateType();
+                if (dateType == null) {
+                    throw new IllegalArgumentException("dateType is required for DateAttribute");
+                }
                 return AttributeFactory.createDateAttribute(
                         Generator.generateId("a"),
                         request.getName(),
                         contentType,
                         request.isRequired(),
-                        request.getDateType(),
+                        dateType,
                         request.getDefaultValue(),
                         request.isUnique());
 
