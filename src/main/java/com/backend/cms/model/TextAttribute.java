@@ -10,12 +10,16 @@ import lombok.NoArgsConstructor;
 public class TextAttribute extends Attribute {
     private int minimumLength;
     private int maximumLength;
-    private TextType type;
+    private boolean unique;
+    private TextType textType;
+    private String defaultValue;
 
-    public TextAttribute(String attributeId, String name, ContentType contentType, boolean required, int minimumLength, int maximumLength, TextType type) {
+    public TextAttribute(String attributeId, String name, ContentType contentType, boolean required, int minimumLength, int maximumLength, boolean unique, TextType textType, String defaultValue) {
         super(attributeId, name, contentType, required);
         this.minimumLength = minimumLength;
         this.maximumLength = maximumLength;
-        this.type = type;
+        this.unique = unique;
+        this.textType = textType;
+        this.defaultValue = defaultValue;
     }
 }

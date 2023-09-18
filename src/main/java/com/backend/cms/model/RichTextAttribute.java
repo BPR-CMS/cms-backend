@@ -10,10 +10,12 @@ import lombok.NoArgsConstructor;
 public class RichTextAttribute extends Attribute {
     private int minimumLength;
     private int maximumLength;
+    private String defaultValue;
 
-    public RichTextAttribute(String attributeId, String name, ContentType contentType, boolean required, int minimumLength, int maximumLength) {
+    public RichTextAttribute(String attributeId, String name, ContentType contentType, boolean required, int minimumLength, int maximumLength, String defaultValue) {
         super(attributeId, name, contentType, required);
         this.minimumLength = minimumLength;
         this.maximumLength = maximumLength;
+        this.defaultValue = defaultValue;
     }
 }

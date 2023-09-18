@@ -9,10 +9,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DateAttribute extends Attribute {
     private DateType dateType;
+    private String defaultValue;
+    private boolean unique;
 
-    public DateAttribute(String attributeId, String name, ContentType contentType, boolean required, DateType dateType) {
+    public DateAttribute(String attributeId, String name, ContentType contentType, boolean required, DateType dateType, String defaultValue, boolean unique) {
         super(attributeId, name, contentType, required);
         this.dateType = dateType;
+        this.defaultValue = defaultValue;
+        this.unique = unique;
     }
 
 }

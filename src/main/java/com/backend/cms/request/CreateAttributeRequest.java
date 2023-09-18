@@ -13,7 +13,7 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 public class CreateAttributeRequest {
     @NotBlank(message = "Name cannot be blank")
-    @Pattern(regexp = "^[a-zA-Z\\s]{2,20}$", message = "Name must be 2-20 characters and contain only letters and spaces.")
+    @Pattern(regexp = "^[\\s\\S]{2,20}$", message = "Name must be 2-20 characters.")
     private String name;
 
     private ContentType contentType;
@@ -27,16 +27,15 @@ public class CreateAttributeRequest {
     @Max(value = 5000, message = "Length cannot exceed 5000.")
     private Integer maximumRichTextLength; // Use Integer instead of int
 
-    private TextType type;
+    private TextType textType;
     private MediaType mediaType;
     private boolean required;
 
-    @Pattern(regexp = "Integer", message = "Format must be 'Integer'.")
-    private String format;
-    private int defaultValue;
+    private FormatType formatType;
+    private String defaultValue;
     private boolean unique;
 
-    @Min(value = 18, message = "Value must be at least 18.")
+    @Min(value = 0, message = "Value must be at least 0.")
     private Integer minimumValue;
 
     @Max(value = 40, message = "Value cannot exceed 40.")
@@ -46,25 +45,5 @@ public class CreateAttributeRequest {
 
     public void setName(String name) {
         this.name =  name != null ? name.trim() : null;
-    }
-
-    public Integer getMinimumLength() {
-        return (minimumLength != null) ? minimumLength : 0;
-    }
-
-    public Integer getMaximumLength() {
-        return (maximumLength != null) ? maximumLength : 0;
-    }
-
-    public Integer getMaximumRichTextLength() {
-        return (maximumRichTextLength != null) ? maximumRichTextLength : 0;
-    }
-
-    public Integer getMinimumValue() {
-        return (minimumValue != null) ? minimumValue : 0;
-    }
-
-    public Integer getMaximumValue() {
-        return (maximumValue != null) ? maximumValue : 0;
     }
 }

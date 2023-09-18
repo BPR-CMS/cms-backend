@@ -9,15 +9,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class NumberAttribute extends Attribute {
 
-    private String format;
-    private int defaultValue;
+    private FormatType formatType;
+    private String defaultValue;
     private boolean unique;
     private int minimumValue;
     private int maximumValue;
 
-    public NumberAttribute(String attributeId, String name, ContentType contentType, boolean required, String format, int defaultValue, boolean unique, int minimumValue, int maximumValue) {
+    public NumberAttribute(String attributeId, String name, ContentType contentType, boolean required, FormatType formatType, String defaultValue, boolean unique, int minimumValue, int maximumValue) {
         super(attributeId, name, contentType, required);
-        this.format = format;
+        this.formatType = formatType;
         this.defaultValue = defaultValue;
         this.unique = unique;
         this.minimumValue = minimumValue;
