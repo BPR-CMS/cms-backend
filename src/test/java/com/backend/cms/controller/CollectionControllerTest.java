@@ -2,10 +2,10 @@ package com.backend.cms.controller;
 
 import com.backend.cms.dto.CollectionDTO;
 import com.backend.cms.exceptions.NotFoundException;
-import com.backend.cms.model.Collection;
-import com.backend.cms.model.User;
+import com.backend.cms.model.*;
 import com.backend.cms.repository.CollectionRepository;
 import com.backend.cms.repository.UserRepository;
+import com.backend.cms.request.CreateAttributeRequest;
 import com.backend.cms.request.CreateCollectionRequest;
 import com.backend.cms.security.jwt.JwtTokenUtil;
 import com.backend.cms.service.CollectionService;
@@ -19,9 +19,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import javax.validation.constraints.Min;
+import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -281,4 +285,525 @@ class CollectionControllerTest {
 
         assertEquals(expectedStatusCode, actualStatusCode);
     }
+
+    @Test
+    void testAddAttribute_ValidData() throws Exception {
+        String mockCollectionId = "mockCollectionId";
+        Collection mockCollection = new Collection();
+        when(collectionService.findCollectionFailIfNotFound(eq(mockCollectionId))).thenReturn(mockCollection);
+        Attribute mockAttribute = new Attribute();
+
+        CreateAttributeRequest request = new CreateAttributeRequest();
+
+        request.setName("Attribute nr 1");
+
+        when(collectionService.createAttributeInstance(any(CreateAttributeRequest.class))).thenReturn(mockAttribute);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request with a valid collectionId and request body
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections/{collectionId}/attributes", mockCollectionId)
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andReturn();
+
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.OK.value();
+
+        // Assert that the response status code is HttpStatus.CREATED (201)
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+    @Test
+    void testAddTextAttribute_ValidData() throws Exception {
+        String mockCollectionId = "mockCollectionId";
+        Collection mockCollection = new Collection();
+
+        // Mock the behavior of collectionService.findCollectionFailIfNotFound()
+        when(collectionService.findCollectionFailIfNotFound(eq(mockCollectionId))).thenReturn(mockCollection);
+
+        Attribute mockAttribute = new Attribute();
+
+        when(collectionService.createAttributeInstance(any(CreateAttributeRequest.class))).thenReturn(mockAttribute);
+
+        // Set properties for the request object with invalid data
+        CreateAttributeRequest request = new CreateAttributeRequest();
+        request.setName("Test attribute");
+        request.setContentType(ContentType.TEXT);
+        request.setTextType(TextType.SHORT);
+        request.setRequired(true);
+        // @Min(value = 2, message = "Length must be at least 2.")
+        request.setMinimumLength(2);
+        //  @Max(value = 50, message = "Length cannot exceed 50.")
+        request.setMaximumLength(50);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request with a valid collectionId and request body
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections/{collectionId}/attributes", mockCollectionId)
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andReturn();
+
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.OK.value();
+
+        // Assert that the response status code is HttpStatus.BAD_REQUEST (400)
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+    @Test
+    void testAddRichTextAttribute_ValidData() throws Exception {
+        String mockCollectionId = "mockCollectionId";
+        Collection mockCollection = new Collection();
+
+        // Mock the behavior of collectionService.findCollectionFailIfNotFound()
+        when(collectionService.findCollectionFailIfNotFound(eq(mockCollectionId))).thenReturn(mockCollection);
+
+        Attribute mockAttribute = new Attribute();
+
+        when(collectionService.createAttributeInstance(any(CreateAttributeRequest.class))).thenReturn(mockAttribute);
+
+        // Set properties for the request object with invalid data
+        CreateAttributeRequest request = new CreateAttributeRequest();
+        request.setName("Test attribute");
+        request.setContentType(ContentType.RICHTEXT);
+        request.setRequired(true);
+        // @Min(value = 2, message = "Length must be at least 2.")
+        request.setMinimumLength(2);
+        //   @Max(value = 5000, message = "Length cannot exceed 5000.")
+        request.setMaximumRichTextLength(5000);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request with a valid collectionId and request body
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections/{collectionId}/attributes", mockCollectionId)
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andReturn();
+
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.OK.value();
+
+        // Assert that the response status code is HttpStatus.BAD_REQUEST (400)
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+    @Test
+    void testAddMediaAttribute_ValidData() throws Exception {
+        String mockCollectionId = "mockCollectionId";
+        Collection mockCollection = new Collection();
+
+        // Mock the behavior of collectionService.findCollectionFailIfNotFound()
+        when(collectionService.findCollectionFailIfNotFound(eq(mockCollectionId))).thenReturn(mockCollection);
+
+        Attribute mockAttribute = new Attribute();
+
+        when(collectionService.createAttributeInstance(any(CreateAttributeRequest.class))).thenReturn(mockAttribute);
+
+        // Set properties for the request object with invalid data
+        CreateAttributeRequest request = new CreateAttributeRequest();
+        request.setName("Test attribute");
+        request.setContentType(ContentType.MEDIA);
+        request.setRequired(false);
+        request.setMediaType(MediaType.MULTIPLE);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request with a valid collectionId and request body
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections/{collectionId}/attributes", mockCollectionId)
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andReturn();
+
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.OK.value();
+
+        // Assert that the response status code is HttpStatus.BAD_REQUEST (400)
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+    @Test
+    void testAddDateAttribute_ValidData() throws Exception {
+        String mockCollectionId = "mockCollectionId";
+        Collection mockCollection = new Collection();
+
+        // Mock the behavior of collectionService.findCollectionFailIfNotFound()
+        when(collectionService.findCollectionFailIfNotFound(eq(mockCollectionId))).thenReturn(mockCollection);
+
+        Attribute mockAttribute = new Attribute();
+
+        when(collectionService.createAttributeInstance(any(CreateAttributeRequest.class))).thenReturn(mockAttribute);
+
+        // Set properties for the request object with invalid data
+        CreateAttributeRequest request = new CreateAttributeRequest();
+        request.setName("Test attribute");
+        request.setContentType(ContentType.DATE);
+        request.setRequired(false);
+        request.setDateType(DateType.DATE);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request with a valid collectionId and request body
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections/{collectionId}/attributes", mockCollectionId)
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andReturn();
+
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.OK.value();
+
+        // Assert that the response status code is HttpStatus.BAD_REQUEST (400)
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+    @Test
+    void testAddAttribute_InvalidEmptyRequest() throws Exception {
+        String mockCollectionId = "mockCollectionId";
+        Collection mockCollection = new Collection();
+
+        // Mock the behavior of collectionService.findCollectionFailIfNotFound()
+        when(collectionService.findCollectionFailIfNotFound(eq(mockCollectionId))).thenReturn(mockCollection);
+        // Mock the behavior of collectionService.createAttributeInstance to return null (indicating invalid data)
+        when(collectionService.createAttributeInstance(any(CreateAttributeRequest.class))).thenReturn(null);
+
+        CreateAttributeRequest request = new CreateAttributeRequest();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request with a valid collectionId and request body
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections/{collectionId}/attributes", mockCollectionId)
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andReturn();
+
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.BAD_REQUEST.value();
+
+        // Assert that the response status code is HttpStatus.BAD_REQUEST (400)
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+    @Test
+    void testAddAttribute_InvalidLongName() throws Exception {
+        String mockCollectionId = "mockCollectionId";
+        Collection mockCollection = new Collection();
+
+        // Mock the behavior of collectionService.findCollectionFailIfNotFound()
+        when(collectionService.findCollectionFailIfNotFound(eq(mockCollectionId))).thenReturn(mockCollection);
+
+        Attribute mockAttribute = new Attribute();
+
+        when(collectionService.createAttributeInstance(any(CreateAttributeRequest.class))).thenReturn(mockAttribute);
+
+        // Set properties for the request object with invalid data
+        CreateAttributeRequest request = new CreateAttributeRequest();
+        // Invalid data
+        request.setName("long Name long Name long Name long Name long Name long Name");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request with a valid collectionId and request body
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections/{collectionId}/attributes", mockCollectionId)
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andReturn();
+
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.BAD_REQUEST.value();
+
+        // Assert that the response status code is HttpStatus.BAD_REQUEST (400)
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+    @Test
+    void testAddAttribute_InvalidShortName() throws Exception {
+        String mockCollectionId = "mockCollectionId";
+        Collection mockCollection = new Collection();
+
+        // Mock the behavior of collectionService.findCollectionFailIfNotFound()
+        when(collectionService.findCollectionFailIfNotFound(eq(mockCollectionId))).thenReturn(mockCollection);
+
+        Attribute mockAttribute = new Attribute();
+
+        when(collectionService.createAttributeInstance(any(CreateAttributeRequest.class))).thenReturn(mockAttribute);
+
+        // Set properties for the request object with invalid data
+        CreateAttributeRequest request = new CreateAttributeRequest();
+        // Invalid data
+        request.setName("I");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request with a valid collectionId and request body
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections/{collectionId}/attributes", mockCollectionId)
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andReturn();
+
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.BAD_REQUEST.value();
+
+        // Assert that the response status code is HttpStatus.BAD_REQUEST (400)
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+    @Test
+    void testAddTextAttribute_EmptyName() throws Exception {
+        String mockCollectionId = "mockCollectionId";
+        Collection mockCollection = new Collection();
+
+        // Mock the behavior of collectionService.findCollectionFailIfNotFound()
+        when(collectionService.findCollectionFailIfNotFound(eq(mockCollectionId))).thenReturn(mockCollection);
+
+        Attribute mockAttribute = new Attribute();
+
+        when(collectionService.createAttributeInstance(any(CreateAttributeRequest.class))).thenReturn(mockAttribute);
+
+        // Set properties for the request object with invalid data
+        CreateAttributeRequest request = new CreateAttributeRequest();
+        request.setContentType(ContentType.TEXT);
+        request.setTextType(TextType.SHORT);
+        request.setRequired(true);
+        // @Min(value = 2, message = "Length must be at least 2.")
+        request.setMinimumLength(2);
+        //  @Max(value = 50, message = "Length cannot exceed 50.")
+        request.setMaximumLength(50);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request with a valid collectionId and request body
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections/{collectionId}/attributes", mockCollectionId)
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andReturn();
+
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.BAD_REQUEST.value();
+
+        // Assert that the response status code is HttpStatus.BAD_REQUEST (400)
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+    @Test
+    void testAddRichTextAttribute_EmptyName() throws Exception {
+        String mockCollectionId = "mockCollectionId";
+        Collection mockCollection = new Collection();
+
+        // Mock the behavior of collectionService.findCollectionFailIfNotFound()
+        when(collectionService.findCollectionFailIfNotFound(eq(mockCollectionId))).thenReturn(mockCollection);
+
+        Attribute mockAttribute = new Attribute();
+
+        when(collectionService.createAttributeInstance(any(CreateAttributeRequest.class))).thenReturn(mockAttribute);
+
+        // Set properties for the request object with invalid data
+        CreateAttributeRequest request = new CreateAttributeRequest();
+        request.setContentType(ContentType.RICHTEXT);
+        request.setRequired(true);
+        // @Min(value = 2, message = "Length must be at least 2.")
+        request.setMinimumLength(2);
+        //   @Max(value = 5000, message = "Length cannot exceed 5000.")
+        request.setMaximumRichTextLength(5000);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request with a valid collectionId and request body
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections/{collectionId}/attributes", mockCollectionId)
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andReturn();
+
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.BAD_REQUEST.value();
+
+        // Assert that the response status code is HttpStatus.BAD_REQUEST (400)
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+    @Test
+    void testAddMediaAttribute_EmptyName() throws Exception {
+        String mockCollectionId = "mockCollectionId";
+        Collection mockCollection = new Collection();
+
+        // Mock the behavior of collectionService.findCollectionFailIfNotFound()
+        when(collectionService.findCollectionFailIfNotFound(eq(mockCollectionId))).thenReturn(mockCollection);
+
+        Attribute mockAttribute = new Attribute();
+
+        when(collectionService.createAttributeInstance(any(CreateAttributeRequest.class))).thenReturn(mockAttribute);
+
+        // Set properties for the request object with invalid data
+        CreateAttributeRequest request = new CreateAttributeRequest();
+        request.setContentType(ContentType.MEDIA);
+        request.setRequired(false);
+        request.setMediaType(MediaType.MULTIPLE);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request with a valid collectionId and request body
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections/{collectionId}/attributes", mockCollectionId)
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andReturn();
+
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.BAD_REQUEST.value();
+
+        // Assert that the response status code is HttpStatus.BAD_REQUEST (400)
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+    @Test
+    void testAddDateAttribute_EmptyName() throws Exception {
+        String mockCollectionId = "mockCollectionId";
+        Collection mockCollection = new Collection();
+
+        // Mock the behavior of collectionService.findCollectionFailIfNotFound()
+        when(collectionService.findCollectionFailIfNotFound(eq(mockCollectionId))).thenReturn(mockCollection);
+
+        Attribute mockAttribute = new Attribute();
+
+        when(collectionService.createAttributeInstance(any(CreateAttributeRequest.class))).thenReturn(mockAttribute);
+
+        // Set properties for the request object with invalid data
+        CreateAttributeRequest request = new CreateAttributeRequest();
+        request.setContentType(ContentType.DATE);
+        request.setRequired(false);
+        request.setDateType(DateType.DATE);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request with a valid collectionId and request body
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections/{collectionId}/attributes", mockCollectionId)
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andReturn();
+
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.BAD_REQUEST.value();
+
+        // Assert that the response status code is HttpStatus.BAD_REQUEST (400)
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+    @Test
+    void testAddTextAttribute_InvalidLength() throws Exception {
+        String mockCollectionId = "mockCollectionId";
+        Collection mockCollection = new Collection();
+
+        // Mock the behavior of collectionService.findCollectionFailIfNotFound()
+        when(collectionService.findCollectionFailIfNotFound(eq(mockCollectionId))).thenReturn(mockCollection);
+
+        Attribute mockAttribute = new Attribute();
+
+        when(collectionService.createAttributeInstance(any(CreateAttributeRequest.class))).thenReturn(mockAttribute);
+
+        // Set properties for the request object with invalid data
+        CreateAttributeRequest request = new CreateAttributeRequest();
+
+        request.setName("Test attribute");
+        request.setContentType(ContentType.TEXT);
+        // Invalid data
+        // @Min(value = 2, message = "Length must be at least 2.")
+        request.setMinimumLength(1);
+        //  @Max(value = 50, message = "Length cannot exceed 50.")
+        request.setMaximumLength(51);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request with a valid collectionId and request body
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections/{collectionId}/attributes", mockCollectionId)
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andReturn();
+
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.BAD_REQUEST.value();
+
+        // Assert that the response status code is HttpStatus.BAD_REQUEST (400)
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+    @Test
+    void testAddNumberAttribute_InvalidValues() throws Exception {
+        String mockCollectionId = "mockCollectionId";
+        Collection mockCollection = new Collection();
+
+        // Mock the behavior of collectionService.findCollectionFailIfNotFound()
+        when(collectionService.findCollectionFailIfNotFound(eq(mockCollectionId))).thenReturn(mockCollection);
+
+        Attribute mockAttribute = new Attribute();
+
+        when(collectionService.createAttributeInstance(any(CreateAttributeRequest.class))).thenReturn(mockAttribute);
+
+        // Set properties for the request object with invalid data
+        CreateAttributeRequest request = new CreateAttributeRequest();
+
+        request.setName("Test attribute");
+        request.setContentType(ContentType.NUMBER);
+        // Invalid data
+        // @Min(value = 0, message = "Value must be at least 0.")
+        request.setMinimumValue(-1);
+
+        //  @Max(value = 40, message = "Value cannot exceed 40.")
+        request.setMaximumValue(41);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestJson = objectMapper.writeValueAsString(request);
+
+        // Perform the POST request with a valid collectionId and request body
+        MvcResult result = mvc.perform(
+                        MockMvcRequestBuilders.post("/api/v1/collections/{collectionId}/attributes", mockCollectionId)
+                                .header("Authorization", "Bearer " + token)
+                                .contentType("application/json")
+                                .content(requestJson))
+                .andReturn();
+
+        int actualStatusCode = result.getResponse().getStatus();
+        int expectedStatusCode = HttpStatus.BAD_REQUEST.value(); // Expecting 400 Bad Request
+
+        // Assert that the response status code is HttpStatus.BAD_REQUEST (400)
+        assertEquals(expectedStatusCode, actualStatusCode);
+    }
+
+
 }
