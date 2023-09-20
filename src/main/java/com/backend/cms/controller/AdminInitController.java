@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/v1/admin")
@@ -22,7 +24,7 @@ public class AdminInitController {
 
     @RequestMapping(value = "/initialize", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public RegisterUserDTO create(@RequestBody CreateInitAdminRequest request) {
+    public RegisterUserDTO create(@Valid @RequestBody CreateInitAdminRequest request) {
         LOGGER.info("Creating an admin entry with information: {}", request);
         return adminInitializationService.initializeAdmin(request);
     }

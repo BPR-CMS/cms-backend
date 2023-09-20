@@ -6,7 +6,6 @@ import com.backend.cms.repository.UserRepository;
 import com.backend.cms.request.UpdateUserRequest;
 import com.backend.cms.utils.FieldCleaner;
 import com.backend.cms.utils.Generator;
-import com.backend.cms.utils.InputValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -54,12 +53,5 @@ public class UserService {
 
         // Save the updated user
         save(user);
-    }
-
-    public void validateUserInput(UpdateUserRequest request) {
-        InputValidator.validateName(request.getFirstName());
-        InputValidator.validateName(request.getLastName());
-        InputValidator.validateEmail(request.getEmail());
-        InputValidator.validatePassword(request.getPassword());
     }
 }

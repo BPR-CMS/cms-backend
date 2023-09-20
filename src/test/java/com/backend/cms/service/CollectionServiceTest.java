@@ -1,18 +1,18 @@
 package com.backend.cms.service;
 
+import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.model.Collection;
 import com.backend.cms.repository.CollectionRepository;
-import com.backend.cms.request.CreateCollectionRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -24,119 +24,42 @@ class CollectionServiceTest {
     @InjectMocks
     private CollectionService collectionService;
 
+
     @Test
-    void testValidateAndSaveCollectionWithNullName() {
-        CreateCollectionRequest request = new CreateCollectionRequest();
-        request.setName(null);
+    void testFindNewId() {
+        when(collectionRepository.findByCollectionId(anyString())).thenReturn(null);
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            collectionService.validateAndSaveCollection(new Collection(), request);
-        });
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatus());
-        assertEquals("Fields cannot be null.", exception.getReason());
+        String result = collectionService.findNewId();
+        assertNotNull(result);
+        assertTrue(result.startsWith("c"));
     }
 
     @Test
-    void testValidateAndSaveCollectionWithEmptyName() {
-        CreateCollectionRequest request = new CreateCollectionRequest();
-        request.setName("");
+    void testSave() {
+        Collection collection = new Collection();
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            collectionService.validateAndSaveCollection(new Collection(), request);
-        });
+        collectionService.save(collection);
 
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Invalid name format. Name must be 2-20 characters long.", exception.getReason());
+        verify(collectionRepository, times(1)).save(collection);
     }
 
     @Test
-    void testValidateAndSaveCollectionWithShortName() {
-        CreateCollectionRequest request = new CreateCollectionRequest();
-        request.setName("W");
+    void testFindCollectionFailIfNotFound_CollectionFound() {
+        Collection collection = new Collection();
+        when(collectionRepository.findByCollectionId("collectionId")).thenReturn(collection);
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            collectionService.validateAndSaveCollection(new Collection(), request);
-        });
+        Collection result = collectionService.findCollectionFailIfNotFound("collectionId");
 
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Invalid name format. Name must be 2-20 characters long.", exception.getReason());
+        assertEquals(collection, result);
     }
 
     @Test
-    void testValidateAndSaveCollectionWithLongName() {
-        CreateCollectionRequest request = new CreateCollectionRequest();
-        request.setName("Webinar Webinar Webinar Webinar Webinar");
+    void testFindCollectionFailIfNotFound_CollectionNotFound() {
+        when(collectionRepository.findByCollectionId("collectionId")).thenReturn(null);
 
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            collectionService.validateAndSaveCollection(new Collection(), request);
+        assertThrows(NotFoundException.class, () -> {
+            collectionService.findCollectionFailIfNotFound("collectionId");
         });
-
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Invalid name format. Name must be 2-20 characters long.", exception.getReason());
     }
 
-    @Test
-    void testValidateAndSaveCollectionWithInvalidName() {
-        CreateCollectionRequest request = new CreateCollectionRequest();
-        request.setName("Webinar1@");
-
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            collectionService.validateAndSaveCollection(new Collection(), request);
-        });
-
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-    }
-
-    @Test
-    void testValidateAndSaveCollectionWithNullDescription() {
-        CreateCollectionRequest request = new CreateCollectionRequest();
-        request.setDescription(null);
-
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            collectionService.validateAndSaveCollection(new Collection(), request);
-        });
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatus());
-        assertEquals("Fields cannot be null.", exception.getReason());
-    }
-
-    @Test
-    void testValidateAndSaveCollectionWithEmptyDescription() {
-        CreateCollectionRequest request = new CreateCollectionRequest();
-        request.setName("Webinar");
-        request.setDescription("");
-
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            collectionService.validateAndSaveCollection(new Collection(), request);
-        });
-
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-    }
-
-    @Test
-    void testValidateAndSaveCollectionWithShortNameDescription() {
-        CreateCollectionRequest request = new CreateCollectionRequest();
-        request.setName("Webinar");
-        request.setDescription("D");
-
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            collectionService.validateAndSaveCollection(new Collection(), request);
-        });
-
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-    }
-
-    @Test
-    void testValidateAndSaveCollectionWithLongDescription() {
-        CreateCollectionRequest request = new CreateCollectionRequest();
-        request.setName("Webinar");
-        request.setDescription("Webinar Webinar Webinar Webinar Webinar WebinarWebinar Webinar Webinar Webinar WebinarWebinar Webinar Webinar Webinar WebinarWebinar Webinar Webinar Webinar WebinarWebinar Webinar Webinar Webinar Webinar Webinar Webinar Webinar Webinar Webinar Webinar Webinar Webinar WebinarWebinar Webinar Webinar Webinar WebinarWebinar Webinar Webinar Webinar WebinarWebinar Webinar Webinar Webinar WebinarWebinar Webinar Webinar Webinar WebinarWebinar Webinar Webinar Webinar WebinarWebinar Webinar Webinar Webinar WebinarWebinar Webinar Webinar Webinar WebinarWebinar Webinar Webinar Webinar WebinarWebinar Webinar Webinar Webinar WebinarWebinar Webinar Webinar Webinar WebinarWebinar Webinar Webinar Webinar WebinarWebinar Webinar Webinar Webinar Webinar");
-
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            collectionService.validateAndSaveCollection(new Collection(), request);
-        });
-
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-    }
 }
