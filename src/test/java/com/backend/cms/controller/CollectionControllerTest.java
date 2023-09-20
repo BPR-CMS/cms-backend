@@ -19,13 +19,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.validation.constraints.Min;
-import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -295,7 +292,7 @@ class CollectionControllerTest {
 
         CreateAttributeRequest request = new CreateAttributeRequest();
 
-        request.setName("Attribute nr 1");
+        request.setName("Attribute");
 
         when(collectionService.createAttributeInstance(any(CreateAttributeRequest.class))).thenReturn(mockAttribute);
 

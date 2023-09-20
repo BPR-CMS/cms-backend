@@ -13,7 +13,7 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 public class CreateAttributeRequest {
     @NotBlank(message = "Name cannot be blank")
-    @Pattern(regexp = "^[\\s\\S]{2,20}$", message = "Name must be 2-20 characters.")
+    @Pattern(regexp = "^[a-zA-Z\\s]{2,20}$", message = "Name must be 2-20 characters and contain only letters and spaces.")
     private String name;
 
     private ContentType contentType;
