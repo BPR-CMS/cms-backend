@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -61,5 +63,14 @@ public class UserController {
     public String login(@RequestBody LoginRequest loginRequest) {
         LOGGER.info("Processing login request: {}", loginRequest);
         return authService.login(loginRequest.getEmail(), loginRequest.getPassword());
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public List<UserDTO> findAllUsers() {
+        LOGGER.info("Finding all user entries");
+        List<User> users = userService.findAllUsers();
+        return users.stream()
+                .map(UserDTO::fromUser)
+                .collect(Collectors.toList());
     }
 }
