@@ -15,6 +15,12 @@ public class FieldCleaner {
         return user;
     }
 
+    public static User cleanNewUserFields(User user) {
+        user.setFirstName(cleanField(user.getFirstName()));
+        user.setLastName(cleanField(user.getLastName()));
+        user.setEmail(cleanField(user.getEmail()));
+        return user;
+    }
     public static Collection cleanCollectionFields(Collection collection) {
         collection.setName(cleanField(collection.getName()));
         collection.setDescription(cleanField(collection.getDescription()));

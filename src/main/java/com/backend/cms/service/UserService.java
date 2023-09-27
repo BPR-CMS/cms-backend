@@ -2,7 +2,10 @@ package com.backend.cms.service;
 
 import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.model.User;
+import com.backend.cms.model.UserType;
 import com.backend.cms.repository.UserRepository;
+import com.backend.cms.request.CreateInitAdminRequest;
+import com.backend.cms.request.CreateUserRequest;
 import com.backend.cms.request.UpdateUserRequest;
 import com.backend.cms.utils.FieldCleaner;
 import com.backend.cms.utils.Generator;
@@ -58,5 +61,13 @@ public class UserService {
 
     public List<User> findAllUsers() {
         return userRepository.findAll();
+    }
+
+    public User createUser(CreateUserRequest request) {
+        User user = FieldCleaner.cleanNewUserFields(request.toUser());
+        user.setUserId(findNewId());
+        user.setUserType(UserType.DEFAULT);
+        save(user);
+        return user;
     }
 }
