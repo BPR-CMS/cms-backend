@@ -1,5 +1,5 @@
 package com.backend.cms.model;
 
 public enum UserType {
-    ADMIN
+    ADMIN, DEFAULT
 }
