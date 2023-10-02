@@ -1,5 +1,6 @@
 package com.backend.cms.controller;
 
+import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.request.CreateUserRequest;
 import com.backend.cms.service.InvitationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,4 +28,21 @@ public class InvitationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @PostMapping("/resend/{userId}")
+    public ResponseEntity<String> resendInvitation(@PathVariable String userId) {
+        try {
+            boolean isResent = invitationService.resendInvitation(userId);
+            if (isResent) {
+                return ResponseEntity.ok("Invitation resent successfully!");
+            } else {
+                return ResponseEntity.ok("Invitation is still valid.");
+            }
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 }
