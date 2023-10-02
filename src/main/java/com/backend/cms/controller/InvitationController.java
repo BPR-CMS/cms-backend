@@ -11,7 +11,7 @@ import javax.validation.Valid;
 
 
 @RestController
-@RequestMapping("/api/invitations")
+@RequestMapping("/api/v1/invitations")
 public class InvitationController {
 
     @Autowired
