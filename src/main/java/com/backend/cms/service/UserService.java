@@ -1,6 +1,7 @@
 package com.backend.cms.service;
 
 import com.backend.cms.exceptions.NotFoundException;
+import com.backend.cms.model.AccountStatus;
 import com.backend.cms.model.User;
 import com.backend.cms.model.UserType;
 import com.backend.cms.repository.UserRepository;
@@ -67,7 +68,16 @@ public class UserService {
         User user = FieldCleaner.cleanNewUserFields(request.toUser());
         user.setUserId(findNewId());
         user.setUserType(UserType.DEFAULT);
+
+        boolean isPasswordSet = isPasswordSet(user);
+
+        // Set account status based on if the password has been set
+        user.setAccountStatus(AccountStatus.valueOf(isPasswordSet ? AccountStatus.CREATED.name() : AccountStatus.PENDING.name()));
         save(user);
         return user;
+    }
+
+    public boolean isPasswordSet(User user) {
+        return user.getPassword() != null && !user.getPassword().isEmpty();
     }
 }

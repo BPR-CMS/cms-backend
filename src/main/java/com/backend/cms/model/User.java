@@ -27,6 +27,7 @@ public class User {
     private String password;
     private UserType userType;
     private String token;
+    private AccountStatus accountStatus;
 
     public User( String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
@@ -35,11 +36,12 @@ public class User {
         this.password = password;
     }
 
-    public User(String firstName, String lastName, String email, UserType userType)
+    public User(String firstName, String lastName, String email, UserType userType, AccountStatus accountStatus)
     {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.userType = userType;
+        this.accountStatus = accountStatus;
     }
 }

@@ -1,5 +1,6 @@
 package com.backend.cms.request;
 
+import com.backend.cms.model.AccountStatus;
 import com.backend.cms.model.User;
 import com.backend.cms.model.UserType;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class CreateUserRequest {
     private String email;
 
     private UserType userType;
+    private AccountStatus accountStatus;
 
     public void setFirstName(String firstName) {
         this.firstName = firstName != null ? firstName.trim() : null;
@@ -35,6 +37,6 @@ public class CreateUserRequest {
     }
 
     public User toUser() {
-        return new User(firstName, lastName, email, userType);
+        return new User(firstName, lastName, email, userType, accountStatus);
     }
 }
