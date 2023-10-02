@@ -12,6 +12,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/utils/resetDatabase").permitAll()
                 .antMatchers("/api/v1/collections").authenticated()
                 .antMatchers("/api/v1/collections/{collectionId}/attributes").authenticated()
+                .antMatchers("/api/v1/invitations/send").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/users/**").authenticated() // Requires authentication
                 .antMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated() // Requires authentication
                 .antMatchers(HttpMethod.DELETE, "/api/v1/users/**").authenticated() // Requires authentication
@@ -51,6 +54,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .permitAll();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/*")
+                        .allowedOrigins("http://localhost:3000")
+                        .allowedMethods("")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
+            }
+        };
     }
 
     // Bean to provide password encoding functionality
