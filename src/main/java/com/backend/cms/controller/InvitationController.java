@@ -1,5 +1,6 @@
 package com.backend.cms.controller;
 
+import com.backend.cms.dto.UserDTO;
 import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.model.User;
 import com.backend.cms.request.CreateUserRequest;
@@ -56,6 +57,17 @@ public class InvitationController {
         String token = user.getToken();
         boolean isExpired = invitationService.isTokenExpired(token);
         return ResponseEntity.ok(isExpired);
+    }
+
+    @GetMapping("/validateToken")
+    public ResponseEntity<?> validateToken(@RequestParam String token) {
+        User user = invitationService.findByToken(token);
+
+        if (user != null && !invitationService.isTokenExpired(token)) {
+            UserDTO userDTO = UserDTO.fromUser(user);
+            return ResponseEntity.ok().body(userDTO);
+        }
+        return ResponseEntity.badRequest().body("Invalid or expired token");
     }
 
 }
