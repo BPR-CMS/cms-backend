@@ -49,7 +49,7 @@ public class InvitationService {
         return token + "_" + expirationTimeMillis;
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         String[] parts = token.split("_");
         if (parts.length != 2) {
             return true;
