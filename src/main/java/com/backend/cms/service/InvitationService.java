@@ -23,13 +23,22 @@ public class InvitationService {
     private UserRepository userRepository;
 
     public void sendInvitation(CreateUserRequest request) {
-        // Generate a unique token
+        String recipientEmail = request.getEmail();
+
+        User existingUser = userRepository.findByEmail(recipientEmail);
+        if (existingUser != null) {
+            throw new IllegalStateException("Invitation already sent");
+        } else {
+            handleNewUserInvitation(request, recipientEmail);
+        }
+    }
+
+    private void handleNewUserInvitation(CreateUserRequest request, String recipientEmail) {
         String token = generateUniqueToken();
 
         userService.createUser(request, token);
 
-        // Send invitation email
-        sendEmail(request.getEmail(), token);
+        sendEmail(recipientEmail, token);
     }
 
     private void sendEmail(String recipientEmail, String token) {
