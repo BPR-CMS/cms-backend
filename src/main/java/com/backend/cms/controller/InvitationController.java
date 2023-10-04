@@ -1,8 +1,10 @@
 package com.backend.cms.controller;
 
 import com.backend.cms.exceptions.NotFoundException;
+import com.backend.cms.model.User;
 import com.backend.cms.request.CreateUserRequest;
 import com.backend.cms.service.InvitationService;
+import com.backend.cms.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,9 @@ public class InvitationController {
 
     @Autowired
     private InvitationService invitationService;
+
+    @Autowired
+    UserService userService;
 
     @PostMapping("/send")
     public ResponseEntity<String> sendInvitationEmail(
@@ -43,6 +48,14 @@ public class InvitationController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+
+    @GetMapping("/isTokenExpired/{userId}")
+    public ResponseEntity<Boolean> checkInvitationExpired(@PathVariable String userId) {
+        User user = userService.findUserFailIfNotFound(userId);
+        String token = user.getToken();
+        boolean isExpired = invitationService.isTokenExpired(token);
+        return ResponseEntity.ok(isExpired);
     }
 
 }
