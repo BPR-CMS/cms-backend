@@ -36,7 +36,7 @@ public class InvitationService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(recipientEmail);
         message.setSubject("Invitation to CMS System");
-        message.setText("Link: /setup?token= " + token);
+        message.setText("https://yourwebsite.com/register?token=" + token);
 
         javaMailSender.send(message);
     }
