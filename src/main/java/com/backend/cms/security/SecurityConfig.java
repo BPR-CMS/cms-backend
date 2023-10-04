@@ -46,7 +46,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/utils/resetDatabase").permitAll()
                 .antMatchers("/api/v1/collections").authenticated()
                 .antMatchers("/api/v1/collections/{collectionId}/attributes").authenticated()
-                .antMatchers("/api/v1/invitations/send").permitAll()
+                .antMatchers("/api/v1/invitations/send").authenticated()
+                .antMatchers("/api/v1/invitations/resend/{userId}").permitAll()
+                .antMatchers("/api/v1/invitations/isTokenExpired/{userId}").permitAll()
+                .antMatchers("/api/v1/invitations/validateToken").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/users/**").authenticated() // Requires authentication
                 .antMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated() // Requires authentication
                 .antMatchers(HttpMethod.DELETE, "/api/v1/users/**").authenticated() // Requires authentication
