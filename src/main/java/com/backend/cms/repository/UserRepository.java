@@ -14,4 +14,7 @@ public interface UserRepository extends MongoRepository<User, String>, QuerydslP
 
     @Query("{'userId':?0}")
     User findByUserId(String userId);
+
+    @Query("{'token':?0}")
+    User findByToken(String token);
 }

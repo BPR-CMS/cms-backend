@@ -78,4 +78,9 @@ public class InvitationService {
         }
     }
 
+    public User findByToken(String token) {
+        User user = userRepository.findByToken(token);
+        if (user == null) throw new NotFoundException();
+        return user;
+    }
 }
