@@ -1,6 +1,7 @@
 package com.backend.cms.service;
 
 import com.backend.cms.dto.RegisterUserDTO;
+import com.backend.cms.model.AccountStatus;
 import com.backend.cms.model.Config;
 import com.backend.cms.model.User;
 import com.backend.cms.model.UserType;
@@ -38,6 +39,7 @@ public class AdminInitializationService {
     private User createUserFromRequest(CreateInitAdminRequest request) {
         User user = request.toAdmin();
         user.setUserId(userService.findNewId());
+        user.setAccountStatus(AccountStatus.CREATED);
         return user;
     }
 
