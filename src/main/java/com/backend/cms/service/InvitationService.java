@@ -50,7 +50,7 @@ public class InvitationService {
         javaMailSender.send(message);
     }
 
-    private String generateUniqueToken() {
+    public String generateUniqueToken() {
 
         // Valid token for 24 hours
         long expirationTimeMillis = System.currentTimeMillis() + (24 * 60 * 60 * 1000);

@@ -18,6 +18,7 @@ public class CreateUserRequest {
     @NotBlank(message = "Last name cannot be blank")
     @Pattern(regexp = "^[a-zA-Z\\s]{2,20}$", message = "Last name must be 2-20 characters and contain only letters and spaces.")
     private String lastName;
+    @NotBlank(message = "Email cannot be blank")
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$", message = "Email must be valid.")
     private String email;
 
