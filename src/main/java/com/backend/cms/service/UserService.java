@@ -6,6 +6,7 @@ import com.backend.cms.model.User;
 import com.backend.cms.model.UserType;
 import com.backend.cms.repository.UserRepository;
 import com.backend.cms.request.CreateUserRequest;
+import com.backend.cms.request.SetPasswordRequest;
 import com.backend.cms.request.UpdateUserRequest;
 import com.backend.cms.utils.FieldCleaner;
 import com.backend.cms.utils.Generator;
@@ -85,5 +86,15 @@ public class UserService {
 
     public boolean isPasswordSet(User user) {
         return user.getPassword() != null && !user.getPassword().isEmpty();
+    }
+
+    public void setUserPassword(User user, SetPasswordRequest request) {
+
+        String password = request.getPassword();
+        user.setPassword(encryptPassword(FieldCleaner.cleanField(password)));
+        user.setAccountStatus(AccountStatus.CREATED);
+
+        // Save the updated user
+        save(user);
     }
 }
