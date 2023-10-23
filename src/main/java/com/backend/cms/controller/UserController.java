@@ -4,6 +4,7 @@ import com.backend.cms.dto.UserDTO;
 import com.backend.cms.model.User;
 import com.backend.cms.repository.UserRepository;
 import com.backend.cms.request.LoginRequest;
+import com.backend.cms.request.SetPasswordRequest;
 import com.backend.cms.request.UpdateUserRequest;
 import com.backend.cms.service.AuthService;
 import com.backend.cms.service.UserService;
@@ -73,4 +74,13 @@ public class UserController {
                 .map(UserDTO::fromUser)
                 .collect(Collectors.toList());
     }
+
+    @RequestMapping(value = "/setPassword/{id}", method = RequestMethod.PUT)
+    public UserDTO setPassword(@PathVariable("id") String id, @Valid @RequestBody SetPasswordRequest request) {
+        User user = userService.findUserFailIfNotFound(id);
+        userService.setUserPassword(user, request);
+        userService.save(user);
+        return UserDTO.fromUser(user);
+    }
+
 }
