@@ -1,6 +1,7 @@
 package com.backend.cms.controller;
 
 import com.backend.cms.dto.UserDTO;
+import com.backend.cms.model.AccountStatus;
 import com.backend.cms.model.User;
 import com.backend.cms.repository.UserRepository;
 import com.backend.cms.request.LoginRequest;
@@ -77,6 +78,11 @@ public class UserController {
     @RequestMapping(value = "/setPassword/{id}", method = RequestMethod.PATCH)
     public UserDTO setPassword(@PathVariable("id") String id, @Valid @RequestBody SetPasswordRequest request) {
         User user = userService.findUserFailIfNotFound(id);
+
+        // Check if the account status is already created
+        if (user.getAccountStatus() == AccountStatus.CREATED) {
+            throw new IllegalArgumentException("Password already set.");
+        }
         userService.setUserPassword(user, request);
         return UserDTO.fromUser(user);
     }
