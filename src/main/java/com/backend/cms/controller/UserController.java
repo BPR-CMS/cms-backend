@@ -46,7 +46,6 @@ public class UserController {
         LOGGER.info("Updating user entry with information: {}", request);
         User user = userService.findUserFailIfNotFound(id);
         userService.updateUser(user, request);
-        userService.save(user);
         LOGGER.info("Updated user entry with information: {}", user);
         return UserDTO.fromUser(user);
     }
@@ -79,7 +78,6 @@ public class UserController {
     public UserDTO setPassword(@PathVariable("id") String id, @Valid @RequestBody SetPasswordRequest request) {
         User user = userService.findUserFailIfNotFound(id);
         userService.setUserPassword(user, request);
-        userService.save(user);
         return UserDTO.fromUser(user);
     }
 
