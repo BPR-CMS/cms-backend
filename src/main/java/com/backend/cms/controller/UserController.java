@@ -75,7 +75,7 @@ public class UserController {
                 .collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "/setPassword/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/setPassword/{id}", method = RequestMethod.PATCH)
     public UserDTO setPassword(@PathVariable("id") String id, @Valid @RequestBody SetPasswordRequest request) {
         User user = userService.findUserFailIfNotFound(id);
         userService.setUserPassword(user, request);
