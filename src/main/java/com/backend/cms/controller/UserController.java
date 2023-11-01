@@ -1,9 +1,12 @@
 package com.backend.cms.controller;
 
 import com.backend.cms.dto.UserDTO;
+import com.backend.cms.exceptions.ConflictException;
+import com.backend.cms.model.AccountStatus;
 import com.backend.cms.model.User;
 import com.backend.cms.repository.UserRepository;
 import com.backend.cms.request.LoginRequest;
+import com.backend.cms.request.SetPasswordRequest;
 import com.backend.cms.request.UpdateUserRequest;
 import com.backend.cms.service.AuthService;
 import com.backend.cms.service.UserService;
@@ -45,7 +48,6 @@ public class UserController {
         LOGGER.info("Updating user entry with information: {}", request);
         User user = userService.findUserFailIfNotFound(id);
         userService.updateUser(user, request);
-        userService.save(user);
         LOGGER.info("Updated user entry with information: {}", user);
         return UserDTO.fromUser(user);
     }
@@ -73,4 +75,17 @@ public class UserController {
                 .map(UserDTO::fromUser)
                 .collect(Collectors.toList());
     }
+
+    @RequestMapping(value = "/setPassword/{id}", method = RequestMethod.PATCH)
+    public UserDTO setPassword(@PathVariable("id") String id, @Valid @RequestBody SetPasswordRequest request) {
+        User user = userService.findUserFailIfNotFound(id);
+
+        // Check if the account status is already created
+        if (user.getAccountStatus() == AccountStatus.CREATED) {
+            throw new ConflictException("Password already set");
+        }
+        userService.setUserPassword(user, request);
+        return UserDTO.fromUser(user);
+    }
+
 }
