@@ -340,8 +340,8 @@ class UserControllerTest {
         // get the actual status code from the response
         int actualStatusCode = response.getResponse().getStatus();
 
-        // assert the status code is 400 Bad Request
-        assertEquals(HttpStatus.BAD_REQUEST.value(), actualStatusCode);
+        // assert the status code is 409 Conflict
+        assertEquals(HttpStatus.CONFLICT.value(), actualStatusCode);
     }
 
 }
