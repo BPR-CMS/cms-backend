@@ -1,6 +1,7 @@
 package com.backend.cms.controller;
 
 import com.backend.cms.dto.UserDTO;
+import com.backend.cms.exceptions.ConflictException;
 import com.backend.cms.model.AccountStatus;
 import com.backend.cms.model.User;
 import com.backend.cms.repository.UserRepository;
@@ -81,7 +82,7 @@ public class UserController {
 
         // Check if the account status is already created
         if (user.getAccountStatus() == AccountStatus.CREATED) {
-            throw new IllegalArgumentException("Password already set.");
+            throw new ConflictException("Password already set");
         }
         userService.setUserPassword(user, request);
         return UserDTO.fromUser(user);
