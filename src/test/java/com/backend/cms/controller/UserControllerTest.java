@@ -1,9 +1,11 @@
 package com.backend.cms.controller;
 
 
+import com.backend.cms.model.AccountStatus;
 import com.backend.cms.model.User;
 import com.backend.cms.repository.UserRepository;
 import com.backend.cms.request.LoginRequest;
+import com.backend.cms.request.SetPasswordRequest;
 import com.backend.cms.security.jwt.JwtTokenUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,8 +23,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -274,6 +277,70 @@ class UserControllerTest {
         // Retrieve the actual status code from the response
         int actualStatusCode = response.getResponse().getStatus();
         // Assert the status code is BAD_REQUEST for invalid email format
+        assertEquals(HttpStatus.BAD_REQUEST.value(), actualStatusCode);
+    }
+
+    @Test
+    void testSetUserPassword() throws Exception {
+        // create a request with valid password
+        SetPasswordRequest setPasswordRequest = new SetPasswordRequest();
+        setPasswordRequest.setPassword("newPassword@1");
+
+        String requestBody = new ObjectMapper().writeValueAsString(setPasswordRequest);
+
+        // create a mocked User
+        User mockUser = new User();
+        mockUser.setUserId("someUserId");
+
+        when(userRepository.findByUserId(eq("someUserId"))).thenReturn(mockUser);
+
+        when(userRepository.save(any(User.class))).thenReturn(mockUser);
+
+        // perform the PATCH request
+        MvcResult response = mvc.perform(
+                        MockMvcRequestBuilders.patch("/api/v1/users/setPassword/someUserId")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(requestBody))
+                .andReturn();
+
+        // get the actual status code from the response
+        int actualStatusCode = response.getResponse().getStatus();
+        // assert the status code OK for successful password update
+        assertEquals(HttpStatus.OK.value(), actualStatusCode);
+
+        //  userRepository.save() was called with the correct user
+        verify(userRepository, times(1)).save(eq(mockUser));
+
+        //  user's account status is set to CREATED
+        assertEquals(AccountStatus.CREATED, mockUser.getAccountStatus());
+    }
+
+    @Test
+    void testPasswordAlreadySet() throws Exception {
+        // create a SetPasswordRequest object with a valid password
+        SetPasswordRequest setPasswordRequest = new SetPasswordRequest();
+        setPasswordRequest.setPassword("newPassword@1");
+
+        // create a mocked User with account status CREATED
+        User mockUser = new User();
+        mockUser.setUserId("someUserId");
+        mockUser.setAccountStatus(AccountStatus.CREATED);
+
+        when(userRepository.findByUserId(eq("someUserId"))).thenReturn(mockUser);
+
+        String requestBody = new ObjectMapper().writeValueAsString(setPasswordRequest);
+
+        // perform the PATCH request
+        MvcResult response = mvc.perform(
+                        MockMvcRequestBuilders.patch("/api/v1/users/setPassword/someUserId")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(requestBody))
+                .andReturn();
+
+        // get the actual status code from the response
+        int actualStatusCode = response.getResponse().getStatus();
+
+        // assert the status code is 400 Bad Request
         assertEquals(HttpStatus.BAD_REQUEST.value(), actualStatusCode);
     }
 
