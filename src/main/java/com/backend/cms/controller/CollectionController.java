@@ -48,6 +48,13 @@ public class CollectionController {
         return CollectionDTO.fromCollection(collection);
     }
 
+    @RequestMapping(value = "name/{apiId}", method = RequestMethod.GET)
+    public CollectionDTO findByApiId(@PathVariable("apiId") String apiId) {
+        LOGGER.info("Finding collection entry with name (apiId): {}", apiId);
+        Collection collection = collectionService.findCollectionByNameFailIfNotFound(apiId);
+        return CollectionDTO.fromCollection(collection);
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public List<CollectionDTO> findAllCollections() {
         LOGGER.info("Finding all collection entries");
