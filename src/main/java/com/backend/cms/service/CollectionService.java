@@ -35,6 +35,13 @@ public class CollectionService {
         return collection;
     }
 
+    public Collection findCollectionByNameFailIfNotFound(String name) {
+        Collection collection = collectionRepository.findByName(name);
+        if (collection == null) throw new NotFoundException();
+
+        return collection;
+    }
+
     public String findNewId() {
         String id;
         do {
