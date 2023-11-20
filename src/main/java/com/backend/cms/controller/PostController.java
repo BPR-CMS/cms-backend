@@ -2,6 +2,7 @@ package com.backend.cms.controller;
 
 import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.request.CreatePostRequest;
+import com.backend.cms.service.CollectionService;
 import com.backend.cms.service.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,8 @@ public class PostController {
 
     @Autowired
     private PostService postService;
+    @Autowired
+    private CollectionService collectionService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PostController.class);
 
@@ -34,7 +37,8 @@ public class PostController {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             LOGGER.error("Error creating post: {}", e.getMessage());
-            return ResponseEntity.badRequest().body("Error creating post");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
+
