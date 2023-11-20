@@ -19,13 +19,13 @@ public class CreateAttributeRequest {
     private ContentType contentType;
 
     @Min(value = 2, message = "Length must be at least 2.")
-    private Integer minimumLength; // Use Integer instead of int
+    private Integer minimumLength;
 
     @Max(value = 50, message = "Length cannot exceed 50.")
-    private Integer maximumLength; // Use Integer instead of int
+    private Integer maximumLength;
 
     @Max(value = 5000, message = "Length cannot exceed 5000.")
-    private Integer maximumRichTextLength; // Use Integer instead of int
+    private Integer maximumRichTextLength;
 
     private TextType textType;
     private MediaType mediaType;
