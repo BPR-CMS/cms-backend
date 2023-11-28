@@ -5,7 +5,7 @@ public class AttributeFactory {
         return new TextAttribute(attributeId, name, contentType, required, minimumLength, maximumLength, unique, type, defaultValue);
     }
 
-    public static RichTextAttribute createRichTextAttribute(String attributeId, String name, ContentType contentType, boolean required, int minimumLength, int maximumLength, String defaultValue) {
+    public static RichTextAttribute createRichTextAttribute(String attributeId, String name, ContentType contentType, boolean required, Integer minimumLength, Integer maximumLength, String defaultValue) {
         return new RichTextAttribute(attributeId, name, contentType, required, minimumLength, maximumLength, defaultValue);
     }
 

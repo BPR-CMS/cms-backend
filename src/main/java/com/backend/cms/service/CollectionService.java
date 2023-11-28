@@ -150,7 +150,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
     private void setRichTextAttributeProperties(RichTextAttribute richTextAttribute, CreateAttributeRequest request) {
         richTextAttribute.setName(FieldCleaner.cleanField(request.getName()));
         richTextAttribute.setMinimumLength(request.getMinimumLength() != null ? request.getMinimumLength() : 0);
-        richTextAttribute.setMaximumLength(request.getMaximumRichTextLength() != null ? request.getMaximumRichTextLength() : 0);
+        richTextAttribute.setMaximumLength(request.getMaximumRichTextLength());
     }
 
     private void setMediaAttributeProperties(MediaAttribute mediaAttribute, CreateAttributeRequest request) {
@@ -210,7 +210,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
                         contentType,
                         request.isRequired(),
                         request.getMinimumLength() != null ? request.getMinimumLength() : 0,
-                        request.getMaximumRichTextLength() != null ? request.getMaximumRichTextLength() : 0,
+                        request.getMaximumRichTextLength(),
                         request.getDefaultValue());
 
             case MEDIA:
