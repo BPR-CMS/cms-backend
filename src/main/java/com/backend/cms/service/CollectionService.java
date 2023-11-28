@@ -144,7 +144,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
         textAttribute.setName(FieldCleaner.cleanField(request.getName()));
         textAttribute.setTextType(request.getTextType());
         textAttribute.setMinimumLength(request.getMinimumLength() != null ? request.getMinimumLength() : 0);
-        textAttribute.setMaximumLength( request.getMaximumLength() != null ? request.getMaximumLength() : 0);
+        textAttribute.setMaximumLength( request.getMaximumLength() );
     }
 
     private void setRichTextAttributeProperties(RichTextAttribute richTextAttribute, CreateAttributeRequest request) {
@@ -198,7 +198,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
                         contentType,
                         request.isRequired(),
                         request.getMinimumLength() != null ? request.getMinimumLength() : 0,
-                        request.getMaximumLength() != null ? request.getMaximumLength() : 0,
+                        request.getMaximumLength() ,
                         request.isUnique(),
                         textType,
                         request.getDefaultValue());

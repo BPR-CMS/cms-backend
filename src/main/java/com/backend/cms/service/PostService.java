@@ -108,8 +108,10 @@ public class PostService {
         if (textValue.length() < collectionAttribute.getMinimumLength()) {
             throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must have a minimum length of " + collectionAttribute.getMinimumLength());
         }
-        if (textValue.length() > collectionAttribute.getMaximumLength()) {
-            throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must have a maximum length of " + collectionAttribute.getMaximumLength());
+
+        Integer maximumLength = collectionAttribute.getMaximumLength();
+        if (maximumLength != null && textValue.length() > maximumLength) {
+            throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must have a maximum length of " + maximumLength);
         }
         String regexPattern = "^(?=.*[a-zA-Z])[a-zA-Z0-9\\s.,!?]*$";
 

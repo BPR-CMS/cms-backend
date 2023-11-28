@@ -1,7 +1,7 @@
 package com.backend.cms.model;
 
 public class AttributeFactory {
-    public static TextAttribute createTextAttribute(String attributeId, String name, ContentType contentType, boolean required, int minimumLength, int maximumLength, boolean unique, TextType type, String defaultValue) {
+    public static TextAttribute createTextAttribute(String attributeId, String name, ContentType contentType, boolean required, Integer minimumLength, Integer maximumLength, boolean unique, TextType type, String defaultValue) {
         return new TextAttribute(attributeId, name, contentType, required, minimumLength, maximumLength, unique, type, defaultValue);
     }
 
