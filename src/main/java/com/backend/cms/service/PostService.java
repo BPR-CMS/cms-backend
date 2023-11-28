@@ -8,6 +8,8 @@ import com.backend.cms.utils.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -20,8 +22,21 @@ public class PostService {
     @Autowired
     private CollectionService collectionService;
 
+//    public void createPost(String collectionId, CreatePostRequest request) {
+//        Collection collection = collectionService.findCollectionFailIfNotFound(collectionId);
+//
+//        validatePostAttributes(collection.getAttributes(), request.getAttributes());
+//
+//        Post newPost = createNewPost(collectionId, request);
+//
+//        saveNewPost(newPost);
+//    }
+
     public void createPost(String collectionId, CreatePostRequest request) {
         Collection collection = collectionService.findCollectionFailIfNotFound(collectionId);
+
+        // Set default values for empty or null attributes
+        setDefaultValuesForAttributes(collection.getAttributes(), request.getAttributes());
 
         validatePostAttributes(collection.getAttributes(), request.getAttributes());
 
@@ -29,6 +44,33 @@ public class PostService {
 
         saveNewPost(newPost);
     }
+
+    private void setDefaultValuesForAttributes(List<Attribute> collectionAttributes, Map<String, Object> postAttributes) {
+        for (Attribute collectionAttribute : collectionAttributes) {
+            String attributeName = collectionAttribute.getName();
+
+            if (!postAttributes.containsKey(attributeName) || postAttributes.get(attributeName).toString().isEmpty()) {
+                setDefaultValueForAttributeType(collectionAttribute, postAttributes);
+            }
+        }
+    }
+
+    private void setDefaultValueForAttributeType(Attribute collectionAttribute, Map<String, Object> postAttributes) {
+        if (collectionAttribute instanceof DateAttribute) {
+            DateAttribute dateAttribute = (DateAttribute) collectionAttribute;
+            postAttributes.put(collectionAttribute.getName(), dateAttribute.getDefaultValue());
+        } else if (collectionAttribute instanceof TextAttribute) {
+            TextAttribute textAttribute = (TextAttribute) collectionAttribute;
+            postAttributes.put(collectionAttribute.getName(), textAttribute.getDefaultValue());
+        } else if (collectionAttribute instanceof NumberAttribute) {
+            NumberAttribute numberAttribute = (NumberAttribute) collectionAttribute;
+            postAttributes.put(collectionAttribute.getName(), numberAttribute.getDefaultValue());
+        } else if (collectionAttribute instanceof RichTextAttribute) {
+            RichTextAttribute richTextAttribute = (RichTextAttribute) collectionAttribute;
+            postAttributes.put(collectionAttribute.getName(), richTextAttribute.getDefaultValue());
+        }
+    }
+
 
     private void validatePostAttributes(List<Attribute> collectionAttributes, Map<String, Object> postAttributes) {
         for (Attribute collectionAttribute : collectionAttributes) {
@@ -53,6 +95,9 @@ public class PostService {
                 break;
             case RICHTEXT:
                 validateRichTextAttribute((RichTextAttribute) collectionAttribute, attributeValue);
+                break;
+            case DATE:
+                validateDateAttribute((DateAttribute) collectionAttribute, attributeValue);
                 break;
         }
     }
@@ -94,15 +139,37 @@ public class PostService {
         }
 
     }
-        private void validateNumberAttribute(NumberAttribute collectionAttribute, Object attributeValue) {
-        if ( ((Number) attributeValue).intValue() < collectionAttribute.getMinimumValue()) {
+
+    private void validateNumberAttribute(NumberAttribute collectionAttribute, Object attributeValue) {
+        if (((Number) attributeValue).intValue() < collectionAttribute.getMinimumValue()) {
             throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must have a minimum value of " + collectionAttribute.getMinimumValue());
         }
-        if ( ((Number) attributeValue).intValue() > collectionAttribute.getMaximumValue()) {
+        if (((Number) attributeValue).intValue() > collectionAttribute.getMaximumValue()) {
             throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must have a maximum value of " + collectionAttribute.getMaximumValue());
         }
     }
 
+    private void validateDateAttribute(DateAttribute collectionAttribute, Object attributeValue) {
+        String dateValue;
+
+        // Set the default value if attributeValue is null or an empty string
+        if (attributeValue == null || attributeValue.toString().isEmpty()) {
+            dateValue = collectionAttribute.getDefaultValue();
+        } else {
+            dateValue = attributeValue.toString();
+        }
+
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            dateFormat.setLenient(false);
+            Date parsedDate = dateFormat.parse(dateValue);
+
+            dateValue = dateFormat.format(parsedDate);
+
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must be a valid date format.");
+        }
+    }
 
     private boolean isAttributeValueNotUnique(String attributeName, String attributeValue) {
         // Retrieve existing posts from the database
@@ -135,27 +202,27 @@ public class PostService {
     }
 
 
-private Post createNewPost(String collectionId, CreatePostRequest request) {
-    Post newPost = new Post();
-    newPost.setPostId(Generator.generateId("p"));
-    newPost.setCollectionId(collectionId);
+    private Post createNewPost(String collectionId, CreatePostRequest request) {
+        Post newPost = new Post();
+        newPost.setPostId(Generator.generateId("p"));
+        newPost.setCollectionId(collectionId);
 
-    Map<String, Object> trimmedAttributes = new HashMap<>();
-    for (Map.Entry<String, Object> entry : request.getAttributes().entrySet()) {
-        String attributeName = entry.getKey();
-        Object attributeValue = entry.getValue();
+        Map<String, Object> trimmedAttributes = new HashMap<>();
+        for (Map.Entry<String, Object> entry : request.getAttributes().entrySet()) {
+            String attributeName = entry.getKey();
+            Object attributeValue = entry.getValue();
 
-        if (attributeValue instanceof String) {
-            trimmedAttributes.put(attributeName, ((String) attributeValue).trim());
-        } else {
-            trimmedAttributes.put(attributeName, attributeValue);
+            if (attributeValue instanceof String) {
+                trimmedAttributes.put(attributeName, ((String) attributeValue).trim());
+            } else {
+                trimmedAttributes.put(attributeName, attributeValue);
+            }
         }
+
+        newPost.setAttributes(trimmedAttributes);
+
+        return newPost;
     }
-
-    newPost.setAttributes(trimmedAttributes);
-
-    return newPost;
-}
 
     private void saveNewPost(Post newPost) {
         postRepository.save(newPost);
