@@ -143,14 +143,17 @@ public class PostService {
     }
 
     private void validateNumberAttribute(NumberAttribute collectionAttribute, Object attributeValue) {
-        if (((Number) attributeValue).intValue() < collectionAttribute.getMinimumValue()) {
+        int attributeIntValue = ((Number) attributeValue).intValue();
+
+        if (attributeIntValue < collectionAttribute.getMinimumValue()) {
             throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must have a minimum value of " + collectionAttribute.getMinimumValue());
         }
-        if (((Number) attributeValue).intValue() > collectionAttribute.getMaximumValue()) {
-            throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must have a maximum value of " + collectionAttribute.getMaximumValue());
+
+        Integer maximumValue = collectionAttribute.getMaximumValue();
+        if (maximumValue != null && attributeIntValue > maximumValue) {
+            throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must have a maximum value of " + maximumValue);
         }
     }
-
     private void validateDateAttribute(DateAttribute collectionAttribute, Object attributeValue) {
         String dateValue;
 

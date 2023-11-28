@@ -168,7 +168,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
         numberAttribute.setDefaultValue(request.getDefaultValue());
         numberAttribute.setUnique(request.isUnique());
         numberAttribute.setMinimumValue( request.getMinimumValue() != null ? request.getMinimumValue() : 0);
-        numberAttribute.setMaximumValue( request.getMaximumValue() != null ? request.getMaximumValue() : 0);
+        numberAttribute.setMaximumValue( request.getMaximumValue());
     }
 
     private void setDateAttributeProperties(DateAttribute dateAttribute, CreateAttributeRequest request) {
@@ -239,7 +239,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
                         request.getDefaultValue(),
                         request.isUnique(),
                         request.getMinimumValue() != null ? request.getMinimumValue() : 0,
-                        request.getMaximumValue() != null ? request.getMaximumValue() : 0);
+                        request.getMaximumValue());
 
             case DATE:
                 DateType dateType = request.getDateType();

@@ -13,7 +13,7 @@ public class AttributeFactory {
         return new MediaAttribute(attributeId, name, contentType, required, mediaType);
     }
 
-    public static NumberAttribute createNumberAttribute(String attributeId, String name, ContentType contentType, boolean required, FormatType formatType, String defaultValue, boolean unique, int minimumValue, int maximumValue) {
+    public static NumberAttribute createNumberAttribute(String attributeId, String name, ContentType contentType, boolean required, FormatType formatType, String defaultValue, boolean unique, Integer minimumValue, Integer maximumValue) {
         return new NumberAttribute(attributeId, name, contentType, required, formatType, defaultValue, unique, minimumValue, maximumValue);
     }
 
