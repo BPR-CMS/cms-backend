@@ -73,6 +73,9 @@ public class PostService {
 
 
     private void validatePostAttributes(List<Attribute> collectionAttributes, Map<String, Object> postAttributes) {
+        if (postAttributes == null) {
+            throw new IllegalArgumentException("postAttributes cannot be null.");
+        }
         for (Attribute collectionAttribute : collectionAttributes) {
             String attributeName = collectionAttribute.getName();
 
