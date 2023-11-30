@@ -89,13 +89,15 @@ public class PostService {
             if (postAttributes.containsKey(attributeName)) {
                 Object attributeValue = postAttributes.get(attributeName);
                 validateAttributeValue(collectionAttribute, attributeValue);
-            } else if (collectionAttribute.isRequired()) {
-                throw new IllegalArgumentException("Attribute '" + attributeName + "' is required.");
             }
         }
     }
 
     private void validateAttributeValue(Attribute collectionAttribute, Object attributeValue) {
+        if (attributeValue == null && !collectionAttribute.isRequired()) {
+            // Skip validation for non-required attributes with null values
+            return;
+        }
         switch (collectionAttribute.getContentType()) {
             case TEXT:
                 validateTextAttribute((TextAttribute) collectionAttribute, attributeValue);
@@ -112,7 +114,15 @@ public class PostService {
         }
     }
 
+    private void validateRequiredAttribute(Attribute collectionAttribute, Object attributeValue) {
+        if (collectionAttribute.isRequired() && attributeValue == null) {
+            throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' is required.");
+        }
+    }
+
     private void validateTextAttribute(TextAttribute collectionAttribute, Object attributeValue) {
+        validateRequiredAttribute(collectionAttribute, attributeValue);
+
         String textValue = attributeValue.toString();
 
         if (textValue.length() < collectionAttribute.getMinimumLength()) {
@@ -135,6 +145,8 @@ public class PostService {
     }
 
     private void validateRichTextAttribute(RichTextAttribute collectionAttribute, Object attributeValue) {
+        validateRequiredAttribute(collectionAttribute, attributeValue);
+
         String richTextValue = attributeValue.toString();
 
         if (richTextValue.length() < collectionAttribute.getMinimumLength()) {
@@ -154,6 +166,8 @@ public class PostService {
     }
 
     private void validateNumberAttribute(NumberAttribute collectionAttribute, Object attributeValue) {
+        validateRequiredAttribute(collectionAttribute, attributeValue);
+
         int attributeIntValue = ((Number) attributeValue).intValue();
 
         if (attributeIntValue < collectionAttribute.getMinimumValue()) {
@@ -166,6 +180,7 @@ public class PostService {
         }
     }
     private void validateDateAttribute(DateAttribute collectionAttribute, Object attributeValue) {
+        validateRequiredAttribute(collectionAttribute, attributeValue);
         String dateValue;
 
         if (attributeValue == null || attributeValue.toString().isEmpty()) {
