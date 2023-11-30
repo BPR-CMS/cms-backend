@@ -16,4 +16,5 @@ public interface PostRepository extends MongoRepository<Post, String>, QuerydslP
     List<Post> findByAttributeNameAndValue(@Param("attributeName") String attributeName, @Param("attributeValue") String attributeValue);
 
 
+    List<Post> findByCollectionId(String collectionId);
 }
