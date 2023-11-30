@@ -20,24 +20,37 @@ public class DateAttribute extends Attribute {
     public DateAttribute(String attributeId, String name, ContentType contentType, boolean required, DateType dateType, String defaultValue, boolean unique) {
         super(attributeId, name, contentType, required);
         this.dateType = dateType;
-        setDefaultValue(defaultValue);
+        setDefaultValue(defaultValue,dateType);
         this.unique = unique;
     }
 
-    public void setDefaultValue(String defaultValue) {
-
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-
-            if (defaultValue == null || defaultValue.isEmpty()) {
-                this.defaultValue = defaultValue;
-            } else {
-                Date parsedDate = dateFormat.parse(defaultValue);
-
-                this.defaultValue = dateFormat.format(parsedDate);
-            }
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("Invalid date format for defaultValue");
-        }
+   public void setDefaultValue(String defaultValue, DateType dateType) {
+    if (defaultValue == null || defaultValue.isEmpty()) {
+        this.defaultValue = defaultValue;
+        return;
     }
+
+    try {
+        DateFormat dateFormat;
+
+        switch (dateType) {
+            case DATE:
+                dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                break;
+            case DATETIME:
+                dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                break;
+            case TIME:
+                dateFormat = new SimpleDateFormat("HH:mm");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid DateType specified");
+        }
+
+        Date parsedDate = dateFormat.parse(defaultValue);
+        this.defaultValue = dateFormat.format(parsedDate);
+    } catch (ParseException e) {
+        throw new IllegalArgumentException("Invalid date format for defaultValue");
+    }
+}
 }
