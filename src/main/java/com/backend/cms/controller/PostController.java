@@ -1,6 +1,7 @@
 package com.backend.cms.controller;
 
 import com.backend.cms.exceptions.NotFoundException;
+import com.backend.cms.model.Post;
 import com.backend.cms.request.CreatePostRequest;
 import com.backend.cms.service.CollectionService;
 import com.backend.cms.service.PostService;
@@ -12,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -19,8 +22,6 @@ public class PostController {
 
     @Autowired
     private PostService postService;
-    @Autowired
-    private CollectionService collectionService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PostController.class);
 
@@ -38,6 +39,17 @@ public class PostController {
         } catch (Exception e) {
             LOGGER.error("Error creating post: {}", e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "{collectionId}", method = RequestMethod.GET)
+    public ResponseEntity<List<Post>> getAllPostsForCollection(@PathVariable String collectionId) {
+        try {
+            List<Post> posts = postService.findPostsByCollectionId(collectionId);
+            return ResponseEntity.ok(posts);
+        } catch (Exception e) {
+            LOGGER.error("Error getting posts for collection: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }
