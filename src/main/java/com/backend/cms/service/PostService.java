@@ -181,16 +181,13 @@ public class PostService {
     }
     private void validateDateAttribute(DateAttribute collectionAttribute, Object attributeValue) {
         validateRequiredAttribute(collectionAttribute, attributeValue);
-        String dateValue;
+        String dateValue=attributeValue.toString();
 
-        if (attributeValue == null || attributeValue.toString().isEmpty()) {
+        if (attributeValue.toString().isEmpty()) {
             dateValue = collectionAttribute.getDefaultValue();
-        } else {
-            dateValue = attributeValue.toString();
         }
-
         try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             dateFormat.setLenient(false);
             Date parsedDate = dateFormat.parse(dateValue);
 

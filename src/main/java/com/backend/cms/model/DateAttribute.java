@@ -26,11 +26,11 @@ public class DateAttribute extends Attribute {
 
     public void setDefaultValue(String defaultValue) {
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         try {
 
             if (defaultValue == null || defaultValue.isEmpty()) {
-                this.defaultValue = "default";
+                this.defaultValue = defaultValue;
             } else {
                 Date parsedDate = dateFormat.parse(defaultValue);
 
