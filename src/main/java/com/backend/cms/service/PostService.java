@@ -179,24 +179,42 @@ public class PostService {
             throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must have a maximum value of " + maximumValue);
         }
     }
-    private void validateDateAttribute(DateAttribute collectionAttribute, Object attributeValue) {
-        validateRequiredAttribute(collectionAttribute, attributeValue);
-        String dateValue=attributeValue.toString();
 
-        if (attributeValue.toString().isEmpty()) {
-            dateValue = collectionAttribute.getDefaultValue();
-        }
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            dateFormat.setLenient(false);
-            Date parsedDate = dateFormat.parse(dateValue);
+private void validateDateAttribute(DateAttribute collectionAttribute, Object attributeValue) {
+    validateRequiredAttribute(collectionAttribute, attributeValue);
 
-            dateValue = dateFormat.format(parsedDate);
+    String dateValue = attributeValue.toString();
 
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must be a valid date format.");
-        }
+    if (attributeValue.toString().isEmpty()) {
+        dateValue = collectionAttribute.getDefaultValue();
     }
+
+    try {
+        SimpleDateFormat dateFormat;
+
+        switch (collectionAttribute.getDateType()) {
+            case DATE:
+                dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                break;
+            case DATETIME:
+                dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                break;
+            case TIME:
+                dateFormat = new SimpleDateFormat("HH:mm");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid DateType specified for attribute '" + collectionAttribute.getName() + "'");
+        }
+
+        dateFormat.setLenient(false);
+        Date parsedDate = dateFormat.parse(dateValue);
+
+        dateValue = dateFormat.format(parsedDate);
+
+    } catch (ParseException e) {
+        throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must be a valid format.");
+    }
+}
 
     private boolean isAttributeValueNotUnique(String attributeName, String attributeValue) {
         // Retrieve existing posts from the database
