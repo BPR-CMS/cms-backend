@@ -45,6 +45,11 @@ public class PostService {
         saveNewPost(newPost);
     }
 
+    public List<Post> findPostsByCollectionId(String collectionId) {
+
+        return postRepository.findByCollectionId(collectionId);
+    }
+
     private void setDefaultValuesForAttributes(List<Attribute> collectionAttributes, Map<String, Object> postAttributes) {
         for (Attribute collectionAttribute : collectionAttributes) {
             String attributeName = collectionAttribute.getName();
@@ -78,7 +83,6 @@ public class PostService {
         }
         for (Attribute collectionAttribute : collectionAttributes) {
             String attributeName = collectionAttribute.getName();
-
             if (postAttributes.containsKey(attributeName)) {
                 Object attributeValue = postAttributes.get(attributeName);
                 validateAttributeValue(collectionAttribute, attributeValue);
@@ -161,7 +165,6 @@ public class PostService {
     private void validateDateAttribute(DateAttribute collectionAttribute, Object attributeValue) {
         String dateValue;
 
-        // Set the default value if attributeValue is null or an empty string
         if (attributeValue == null || attributeValue.toString().isEmpty()) {
             dateValue = collectionAttribute.getDefaultValue();
         } else {
