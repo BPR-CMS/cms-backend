@@ -3,7 +3,6 @@ package com.backend.cms.controller;
 import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.model.Post;
 import com.backend.cms.request.CreatePostRequest;
-import com.backend.cms.service.CollectionService;
 import com.backend.cms.service.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

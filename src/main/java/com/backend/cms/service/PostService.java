@@ -22,6 +22,9 @@ public class PostService {
     @Autowired
     private CollectionService collectionService;
 
+    @Autowired
+    private SecurityHelper securityHelper;
+
 //    public void createPost(String collectionId, CreatePostRequest request) {
 //        Collection collection = collectionService.findCollectionFailIfNotFound(collectionId);
 //
@@ -216,6 +219,7 @@ public class PostService {
 
     private Post createNewPost(String collectionId, CreatePostRequest request) {
         Post newPost = new Post();
+        newPost.setUserId(securityHelper.getCurrentUserId());
         newPost.setPostId(Generator.generateId("p"));
         newPost.setCollectionId(collectionId);
 

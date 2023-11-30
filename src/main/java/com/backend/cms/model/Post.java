@@ -27,6 +27,8 @@ public class Post {
     @Indexed
     private String collectionId;
 
+    private String userId;
+
     private Map<String, Object> attributes;
 
 }
