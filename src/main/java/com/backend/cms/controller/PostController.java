@@ -1,5 +1,6 @@
 package com.backend.cms.controller;
 
+import com.backend.cms.dto.PostDTO;
 import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.model.Post;
 import com.backend.cms.request.CreatePostRequest;
@@ -41,7 +42,7 @@ public class PostController {
         }
     }
 
-    @RequestMapping(value = "{collectionId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/collection/{collectionId}", method = RequestMethod.GET)
     public ResponseEntity<List<Post>> getAllPostsForCollection(@PathVariable String collectionId) {
         try {
             List<Post> posts = postService.findPostsByCollectionId(collectionId);
@@ -50,6 +51,13 @@ public class PostController {
             LOGGER.error("Error getting posts for collection: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public PostDTO findById(@PathVariable("id") String id) {
+        LOGGER.info("Finding post entry with id: {}", id);
+        Post post = postService.findPostFailIfNotFound(id);
+        return PostDTO.fromPost(post);
     }
 }
 
