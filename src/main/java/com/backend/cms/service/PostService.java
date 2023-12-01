@@ -197,10 +197,10 @@ private void validateDateAttribute(DateAttribute collectionAttribute, Object att
 
         switch (collectionAttribute.getDateType()) {
             case DATE:
-                dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 break;
             case DATETIME:
-                dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
                 break;
             case TIME:
                 dateFormat = new SimpleDateFormat("HH:mm");
