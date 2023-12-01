@@ -1,5 +1,6 @@
 package com.backend.cms.service;
 
+import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.model.*;
 import com.backend.cms.model.Collection;
 import com.backend.cms.repository.PostRepository;
@@ -51,6 +52,13 @@ public class PostService {
     public List<Post> findPostsByCollectionId(String collectionId) {
 
         return postRepository.findByCollectionId(collectionId);
+    }
+
+    public Post findPostFailIfNotFound(String id) {
+        Post post = postRepository.findByPostId(id);
+        if (post == null) throw new NotFoundException();
+
+        return post;
     }
 
     private void setDefaultValuesForAttributes(List<Attribute> collectionAttributes, Map<String, Object> postAttributes) {
@@ -156,11 +164,6 @@ public class PostService {
         Integer maximumLength = collectionAttribute.getMaximumLength();
         if (maximumLength != null && richTextValue.length() > maximumLength) {
             throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must have a maximum length of " + maximumLength);
-        }
-        String regexPattern = "^(?=.*[a-zA-Z])[a-zA-Z0-9\\s.,!?]*$";
-
-        if (richTextValue.length() > 0 && !richTextValue.matches(regexPattern)) {
-            throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must match the pattern: " + regexPattern);
         }
 
     }
