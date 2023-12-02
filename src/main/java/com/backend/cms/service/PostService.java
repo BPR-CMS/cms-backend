@@ -26,16 +26,6 @@ public class PostService {
     @Autowired
     private SecurityHelper securityHelper;
 
-//    public void createPost(String collectionId, CreatePostRequest request) {
-//        Collection collection = collectionService.findCollectionFailIfNotFound(collectionId);
-//
-//        validatePostAttributes(collection.getAttributes(), request.getAttributes());
-//
-//        Post newPost = createNewPost(collectionId, request);
-//
-//        saveNewPost(newPost);
-//    }
-
     public void createPost(String collectionId, CreatePostRequest request) {
         Collection collection = collectionService.findCollectionFailIfNotFound(collectionId);
 
@@ -64,7 +54,7 @@ public class PostService {
     private void setDefaultValuesForAttributes(List<Attribute> collectionAttributes, Map<String, Object> postAttributes) {
         for (Attribute collectionAttribute : collectionAttributes) {
             String attributeName = collectionAttribute.getName();
-            
+
             if (!postAttributes.containsKey(attributeName) || postAttributes.get(attributeName) == null) {
                 setDefaultValueForAttributeType(collectionAttribute, postAttributes);
             } else if (postAttributes.get(attributeName).toString().isEmpty()) {
@@ -104,26 +94,6 @@ public class PostService {
         }
     }
 
-//    private void validateAttributeValue(Attribute collectionAttribute, Object attributeValue) {
-//        if (attributeValue == null && !collectionAttribute.isRequired()) {
-//            // Skip validation for non-required attributes with null values
-//            return;
-//        }
-//        switch (collectionAttribute.getContentType()) {
-//            case TEXT:
-//                validateTextAttribute((TextAttribute) collectionAttribute, attributeValue);
-//                break;
-//            case NUMBER:
-//                validateNumberAttribute((NumberAttribute) collectionAttribute, attributeValue);
-//                break;
-//            case RICHTEXT:
-//                validateRichTextAttribute((RichTextAttribute) collectionAttribute, attributeValue);
-//                break;
-//            case DATE:
-//                validateDateAttribute((DateAttribute) collectionAttribute, attributeValue);
-//                break;
-//        }
-//    }
 
     private void validateAttributeValue(Attribute collectionAttribute, Object attributeValue) {
         Object valueToValidate;
@@ -164,23 +134,14 @@ public class PostService {
             case TEXT:
             case DATE:
             case RICHTEXT:
-                return "";
             case NUMBER:
-                return 0;
+                return "";
             default:
-
                 return null;
         }
     }
 
-    private void validateRequiredAttribute(Attribute collectionAttribute, Object attributeValue) {
-        if (collectionAttribute.isRequired() && attributeValue == null) {
-            throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' is required.");
-        }
-    }
-
     private void validateTextAttribute(TextAttribute collectionAttribute, Object attributeValue) {
-      //  validateRequiredAttribute(collectionAttribute, attributeValue);
 
         String textValue = attributeValue.toString();
 
@@ -204,7 +165,6 @@ public class PostService {
     }
 
     private void validateRichTextAttribute(RichTextAttribute collectionAttribute, Object attributeValue) {
-       // validateRequiredAttribute(collectionAttribute, attributeValue);
 
         String richTextValue = attributeValue.toString();
 
@@ -220,7 +180,6 @@ public class PostService {
     }
 
     private void validateNumberAttribute(NumberAttribute collectionAttribute, Object attributeValue) {
-     //   validateRequiredAttribute(collectionAttribute, attributeValue);
 
         int attributeIntValue = ((Number) attributeValue).intValue();
 
@@ -235,7 +194,6 @@ public class PostService {
     }
 
 private void validateDateAttribute(DateAttribute collectionAttribute, Object attributeValue) {
-    //validateRequiredAttribute(collectionAttribute, attributeValue);
 
     String dateValue = attributeValue.toString();
 
