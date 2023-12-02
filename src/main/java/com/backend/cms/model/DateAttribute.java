@@ -38,7 +38,7 @@ public class DateAttribute extends Attribute {
                 dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 break;
             case DATETIME:
-                dateFormat = new SimpleDateFormat("yyyy-MM-ddHH:mm");
+                dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
                 break;
             case TIME:
                 dateFormat = new SimpleDateFormat("HH:mm");
