@@ -64,12 +64,15 @@ public class PostService {
     private void setDefaultValuesForAttributes(List<Attribute> collectionAttributes, Map<String, Object> postAttributes) {
         for (Attribute collectionAttribute : collectionAttributes) {
             String attributeName = collectionAttribute.getName();
-
-            if (!postAttributes.containsKey(attributeName) || postAttributes.get(attributeName).toString().isEmpty()) {
+            
+            if (!postAttributes.containsKey(attributeName) || postAttributes.get(attributeName) == null) {
+                setDefaultValueForAttributeType(collectionAttribute, postAttributes);
+            } else if (postAttributes.get(attributeName).toString().isEmpty()) {
                 setDefaultValueForAttributeType(collectionAttribute, postAttributes);
             }
         }
     }
+
 
     private void setDefaultValueForAttributeType(Attribute collectionAttribute, Map<String, Object> postAttributes) {
         if (collectionAttribute instanceof DateAttribute) {
@@ -101,24 +104,72 @@ public class PostService {
         }
     }
 
+//    private void validateAttributeValue(Attribute collectionAttribute, Object attributeValue) {
+//        if (attributeValue == null && !collectionAttribute.isRequired()) {
+//            // Skip validation for non-required attributes with null values
+//            return;
+//        }
+//        switch (collectionAttribute.getContentType()) {
+//            case TEXT:
+//                validateTextAttribute((TextAttribute) collectionAttribute, attributeValue);
+//                break;
+//            case NUMBER:
+//                validateNumberAttribute((NumberAttribute) collectionAttribute, attributeValue);
+//                break;
+//            case RICHTEXT:
+//                validateRichTextAttribute((RichTextAttribute) collectionAttribute, attributeValue);
+//                break;
+//            case DATE:
+//                validateDateAttribute((DateAttribute) collectionAttribute, attributeValue);
+//                break;
+//        }
+//    }
+
     private void validateAttributeValue(Attribute collectionAttribute, Object attributeValue) {
-        if (attributeValue == null && !collectionAttribute.isRequired()) {
-            // Skip validation for non-required attributes with null values
+        Object valueToValidate;
+
+        if (collectionAttribute.isRequired() && attributeValue == null) {
+            throw new IllegalArgumentException("Required attribute cannot be null");
+
+        } else {
+            // Use attributeValue if not null, otherwise use the default value
+            valueToValidate = (attributeValue != null) ? attributeValue : getDefaultAttributeValue(collectionAttribute);
+        }
+
+        // Skip validation for non-required attributes with default values
+        if (!collectionAttribute.isRequired() && valueToValidate.equals(getDefaultAttributeValue(collectionAttribute))) {
             return;
         }
+
         switch (collectionAttribute.getContentType()) {
             case TEXT:
-                validateTextAttribute((TextAttribute) collectionAttribute, attributeValue);
+                validateTextAttribute((TextAttribute) collectionAttribute, valueToValidate);
                 break;
             case NUMBER:
-                validateNumberAttribute((NumberAttribute) collectionAttribute, attributeValue);
+                validateNumberAttribute((NumberAttribute) collectionAttribute, valueToValidate);
                 break;
             case RICHTEXT:
-                validateRichTextAttribute((RichTextAttribute) collectionAttribute, attributeValue);
+                validateRichTextAttribute((RichTextAttribute) collectionAttribute, valueToValidate);
                 break;
             case DATE:
-                validateDateAttribute((DateAttribute) collectionAttribute, attributeValue);
+                validateDateAttribute((DateAttribute) collectionAttribute, valueToValidate);
                 break;
+        }
+    }
+
+
+    private Object getDefaultAttributeValue(Attribute collectionAttribute) {
+
+        switch (collectionAttribute.getContentType()) {
+            case TEXT:
+            case DATE:
+            case RICHTEXT:
+                return "";
+            case NUMBER:
+                return 0;
+            default:
+
+                return null;
         }
     }
 
@@ -129,7 +180,7 @@ public class PostService {
     }
 
     private void validateTextAttribute(TextAttribute collectionAttribute, Object attributeValue) {
-        validateRequiredAttribute(collectionAttribute, attributeValue);
+      //  validateRequiredAttribute(collectionAttribute, attributeValue);
 
         String textValue = attributeValue.toString();
 
@@ -153,7 +204,7 @@ public class PostService {
     }
 
     private void validateRichTextAttribute(RichTextAttribute collectionAttribute, Object attributeValue) {
-        validateRequiredAttribute(collectionAttribute, attributeValue);
+       // validateRequiredAttribute(collectionAttribute, attributeValue);
 
         String richTextValue = attributeValue.toString();
 
@@ -169,7 +220,7 @@ public class PostService {
     }
 
     private void validateNumberAttribute(NumberAttribute collectionAttribute, Object attributeValue) {
-        validateRequiredAttribute(collectionAttribute, attributeValue);
+     //   validateRequiredAttribute(collectionAttribute, attributeValue);
 
         int attributeIntValue = ((Number) attributeValue).intValue();
 
@@ -184,7 +235,7 @@ public class PostService {
     }
 
 private void validateDateAttribute(DateAttribute collectionAttribute, Object attributeValue) {
-    validateRequiredAttribute(collectionAttribute, attributeValue);
+    //validateRequiredAttribute(collectionAttribute, attributeValue);
 
     String dateValue = attributeValue.toString();
 
