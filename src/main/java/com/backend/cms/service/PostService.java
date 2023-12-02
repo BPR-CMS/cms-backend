@@ -134,6 +134,7 @@ public class PostService {
             case TEXT:
             case DATE:
             case RICHTEXT:
+                return "";
             case NUMBER:
                 return "";
             default:
