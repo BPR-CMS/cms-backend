@@ -85,12 +85,23 @@ public class PostService {
         if (postAttributes == null) {
             throw new IllegalArgumentException("postAttributes cannot be null.");
         }
+
+        boolean foundNonRequiredAttributeWithNonEmptyValue = false;
+
         for (Attribute collectionAttribute : collectionAttributes) {
             String attributeName = collectionAttribute.getName();
             if (postAttributes.containsKey(attributeName)) {
                 Object attributeValue = postAttributes.get(attributeName);
                 validateAttributeValue(collectionAttribute, attributeValue);
+
+                if (!collectionAttribute.isRequired() && attributeValue != null && !attributeValue.toString().isEmpty()) {
+                    foundNonRequiredAttributeWithNonEmptyValue = true;
+                }
             }
+        }
+
+        if (!foundNonRequiredAttributeWithNonEmptyValue) {
+            throw new IllegalArgumentException("At least one non-required attribute with a non-empty value is required.");
         }
     }
 
@@ -99,7 +110,7 @@ public class PostService {
         Object valueToValidate;
 
         if (collectionAttribute.isRequired() && attributeValue.toString().isEmpty()) {
-            throw new IllegalArgumentException("Required attribute " + collectionAttribute.getName()+" cannot be null");
+            throw new IllegalArgumentException("Required attribute " + collectionAttribute.getName() + " cannot be null");
         } else {
 
             valueToValidate = (attributeValue != null) ? attributeValue : getDefaultAttributeValue(collectionAttribute);
@@ -193,40 +204,40 @@ public class PostService {
         }
     }
 
-private void validateDateAttribute(DateAttribute collectionAttribute, Object attributeValue) {
+    private void validateDateAttribute(DateAttribute collectionAttribute, Object attributeValue) {
 
-    String dateValue = attributeValue.toString();
+        String dateValue = attributeValue.toString();
 
-    if (attributeValue.toString().isEmpty()) {
-        dateValue = collectionAttribute.getDefaultValue();
-    }
-
-    try {
-        SimpleDateFormat dateFormat;
-
-        switch (collectionAttribute.getDateType()) {
-            case DATE:
-                dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                break;
-            case DATETIME:
-                dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-                break;
-            case TIME:
-                dateFormat = new SimpleDateFormat("HH:mm");
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid DateType specified for attribute '" + collectionAttribute.getName() + "'");
+        if (attributeValue.toString().isEmpty()) {
+            dateValue = collectionAttribute.getDefaultValue();
         }
 
-        dateFormat.setLenient(false);
-        Date parsedDate = dateFormat.parse(dateValue);
+        try {
+            SimpleDateFormat dateFormat;
 
-        dateValue = dateFormat.format(parsedDate);
+            switch (collectionAttribute.getDateType()) {
+                case DATE:
+                    dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    break;
+                case DATETIME:
+                    dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+                    break;
+                case TIME:
+                    dateFormat = new SimpleDateFormat("HH:mm");
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid DateType specified for attribute '" + collectionAttribute.getName() + "'");
+            }
 
-    } catch (ParseException e) {
-        throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must be a valid format.");
+            dateFormat.setLenient(false);
+            Date parsedDate = dateFormat.parse(dateValue);
+
+            dateValue = dateFormat.format(parsedDate);
+
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must be a valid format.");
+        }
     }
-}
 
     private boolean isAttributeValueNotUnique(String attributeName, String attributeValue) {
         // Retrieve existing posts from the database
