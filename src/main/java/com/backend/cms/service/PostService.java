@@ -98,11 +98,10 @@ public class PostService {
     private void validateAttributeValue(Attribute collectionAttribute, Object attributeValue) {
         Object valueToValidate;
 
-        if (collectionAttribute.isRequired() && attributeValue == null) {
-            throw new IllegalArgumentException("Required attribute cannot be null");
-
+        if (collectionAttribute.isRequired() && attributeValue.toString().isEmpty()) {
+            throw new IllegalArgumentException("Required attribute " + collectionAttribute.getName()+" cannot be null");
         } else {
-            // Use attributeValue if not null, otherwise use the default value
+
             valueToValidate = (attributeValue != null) ? attributeValue : getDefaultAttributeValue(collectionAttribute);
         }
 
