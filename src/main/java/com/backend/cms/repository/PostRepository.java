@@ -15,6 +15,13 @@ public interface PostRepository extends MongoRepository<Post, String>, QuerydslP
     @Query("{'attributes.?0': {$regex: ?1, $options: 'i'}}")
     List<Post> findByAttributeNameAndValue(@Param("attributeName") String attributeName, @Param("attributeValue") String attributeValue);
 
+    @Query("{'collectionId': ?0, 'attributes.?1': {$regex: ?2, $options: 'i'}}")
+    List<Post> findByCollectionAndAttributeNameAndValue(
+            @Param("collectionId") String collectionId,
+            @Param("attributeName") String attributeName,
+            @Param("attributeValue") String attributeValue
+    );
+
     List<Post> findByCollectionId(String collectionId);
 
     @Query("{'postId':?0}")

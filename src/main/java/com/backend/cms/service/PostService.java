@@ -32,7 +32,7 @@ public class PostService {
         // Set default values for empty or null attributes
         setDefaultValuesForAttributes(collection.getAttributes(), request.getAttributes());
 
-        validatePostAttributes(collection.getAttributes(), request.getAttributes());
+        validatePostAttributes(collectionId,collection.getAttributes(), request.getAttributes());
 
         Post newPost = createNewPost(collectionId, request);
 
@@ -81,7 +81,7 @@ public class PostService {
     }
 
 
-    private void validatePostAttributes(List<Attribute> collectionAttributes, Map<String, Object> postAttributes) {
+    private void validatePostAttributes(String collectionId,List<Attribute> collectionAttributes, Map<String, Object> postAttributes) {
         if (postAttributes == null) {
             throw new IllegalArgumentException("postAttributes cannot be null.");
         }
@@ -93,7 +93,7 @@ public class PostService {
             String attributeName = collectionAttribute.getName();
             if (postAttributes.containsKey(attributeName)) {
                 Object attributeValue = postAttributes.get(attributeName);
-                validateAttributeValue(collectionAttribute, attributeValue);
+                validateAttributeValue(collectionId,collectionAttribute, attributeValue);
 
                 if (collectionAttribute.isRequired()) {
                     foundRequiredAttribute = true;
@@ -109,7 +109,7 @@ public class PostService {
     }
 
 
-    private void validateAttributeValue(Attribute collectionAttribute, Object attributeValue) {
+    private void validateAttributeValue(String collectionId,Attribute collectionAttribute, Object attributeValue) {
         Object valueToValidate;
 
         if (collectionAttribute.isRequired() && attributeValue.toString().isEmpty()) {
@@ -126,7 +126,7 @@ public class PostService {
 
         switch (collectionAttribute.getContentType()) {
             case TEXT:
-                validateTextAttribute((TextAttribute) collectionAttribute, valueToValidate);
+                validateTextAttribute(collectionId,(TextAttribute) collectionAttribute, valueToValidate);
                 break;
             case NUMBER:
                 validateNumberAttribute((NumberAttribute) collectionAttribute, valueToValidate);
@@ -155,7 +155,7 @@ public class PostService {
         }
     }
 
-    private void validateTextAttribute(TextAttribute collectionAttribute, Object attributeValue) {
+    private void validateTextAttribute(String collectionId,TextAttribute collectionAttribute, Object attributeValue) {
 
         String textValue = attributeValue.toString();
 
@@ -173,7 +173,7 @@ public class PostService {
             throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must match the pattern: " + regexPattern);
         }
 
-        if (collectionAttribute.isUnique() && isAttributeValueNotUnique(collectionAttribute.getName(), textValue)) {
+        if (collectionAttribute.isUnique() && isAttributeValueNotUnique(collectionId, collectionAttribute.getName(), textValue)) {
             throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must have a unique value.");
         }
     }
@@ -242,10 +242,9 @@ public class PostService {
         }
     }
 
-    private boolean isAttributeValueNotUnique(String attributeName, String attributeValue) {
-        // Retrieve existing posts from the database
-        List<Post> allPosts = postRepository.findByAttributeNameAndValue(attributeName, ".*" + attributeValue.trim() + ".*");
+    private boolean isAttributeValueNotUnique(String collectionId, String attributeName, String attributeValue) {
 
+         List<Post> allPosts = postRepository.findByCollectionAndAttributeNameAndValue(collectionId,attributeName, ".*" + attributeValue.trim() + ".*");
         // Check if the attribute value is present in the existing posts
         for (Post post : allPosts) {
             for (Map.Entry<String, Object> entry : post.getAttributes().entrySet()) {
