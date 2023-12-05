@@ -86,6 +86,7 @@ public class PostService {
             throw new IllegalArgumentException("postAttributes cannot be null.");
         }
 
+        boolean foundRequiredAttribute = false;
         boolean foundNonRequiredAttributeWithNonEmptyValue = false;
 
         for (Attribute collectionAttribute : collectionAttributes) {
@@ -94,14 +95,16 @@ public class PostService {
                 Object attributeValue = postAttributes.get(attributeName);
                 validateAttributeValue(collectionAttribute, attributeValue);
 
-                if (!collectionAttribute.isRequired() && attributeValue != null && !attributeValue.toString().isEmpty()) {
+                if (collectionAttribute.isRequired()) {
+                    foundRequiredAttribute = true;
+                } else if (attributeValue != null && !attributeValue.toString().isEmpty()) {
                     foundNonRequiredAttributeWithNonEmptyValue = true;
                 }
             }
         }
 
-        if (!foundNonRequiredAttributeWithNonEmptyValue) {
-            throw new IllegalArgumentException("At least one non-required attribute with a non-empty value is required.");
+        if (!foundRequiredAttribute && !foundNonRequiredAttributeWithNonEmptyValue) {
+            throw new IllegalArgumentException("A post cannot be created with empty data");
         }
     }
 
