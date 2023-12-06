@@ -119,4 +119,97 @@ class PostServiceTest {
 
         System.out.println("Exception message: " + exception.getMessage());
     }
+
+    @Test
+    void createPost_InvalidData_Text_Attribute() {
+        // Mocking data
+        String collectionId = "validCollectionId";
+        CreatePostRequest request = new CreatePostRequest();
+        Map<String, Object> attributes = new HashMap<>();
+        // Adding invalid data for Text attribute
+        attributes.put("Title", 234);
+        request.setAttributes(attributes);
+
+
+        Collection mockCollection = new Collection();
+
+        // Mocking a collection with a valid attribute
+        TextAttribute textAttribute = new TextAttribute();
+        textAttribute.setName("Title");
+        textAttribute.setContentType(ContentType.TEXT);
+        textAttribute.setTextType(TextType.SHORT);
+        textAttribute.setRequired(true);
+        textAttribute.setMinimumLength(2);
+        textAttribute.setMaximumLength(50);
+        mockCollection.setAttributes(Collections.singletonList(textAttribute));
+        when(collectionService.findCollectionFailIfNotFound(eq(collectionId))).thenReturn(mockCollection);
+
+        // Perform the test
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> postService.createPost(collectionId, request));
+
+        System.out.println("Exception message: " + exception.getMessage());
+    }
+
+    @Test
+    void createPost_InvalidData_ExceedsMaxLength_Text_Attribute() {
+        // Mocking data
+        String collectionId = "validCollectionId";
+        CreatePostRequest request = new CreatePostRequest();
+        Map<String, Object> attributes = new HashMap<>();
+        // Adding invalid data for Text attribute
+        attributes.put("Title", "Length is too long, invalid data");
+        request.setAttributes(attributes);
+
+
+        Collection mockCollection = new Collection();
+
+        // Mocking a collection with a valid attribute
+        TextAttribute textAttribute = new TextAttribute();
+        textAttribute.setName("Title");
+        textAttribute.setContentType(ContentType.TEXT);
+        textAttribute.setTextType(TextType.SHORT);
+        textAttribute.setRequired(true);
+        textAttribute.setMinimumLength(2);
+        textAttribute.setMaximumLength(10);
+        mockCollection.setAttributes(Collections.singletonList(textAttribute));
+        when(collectionService.findCollectionFailIfNotFound(eq(collectionId))).thenReturn(mockCollection);
+
+        // Perform the test
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> postService.createPost(collectionId, request));
+
+        // Exception message: Attribute 'Title' must have a maximum length of 10
+        System.out.println("Exception message: " + exception.getMessage());
+    }
+
+    @Test
+    void createPost_InvalidData_BelowMinLength_Text_Attribute() {
+        // Mocking data
+        String collectionId = "validCollectionId";
+        CreatePostRequest request = new CreatePostRequest();
+        Map<String, Object> attributes = new HashMap<>();
+        // Adding invalid data for Text attribute
+        attributes.put("Title", "L");
+        request.setAttributes(attributes);
+
+
+        Collection mockCollection = new Collection();
+
+        // Mocking a collection with a valid attribute
+        TextAttribute textAttribute = new TextAttribute();
+        textAttribute.setName("Title");
+        textAttribute.setContentType(ContentType.TEXT);
+        textAttribute.setTextType(TextType.SHORT);
+        textAttribute.setRequired(true);
+        textAttribute.setMinimumLength(2);
+        textAttribute.setMaximumLength(10);
+        mockCollection.setAttributes(Collections.singletonList(textAttribute));
+        when(collectionService.findCollectionFailIfNotFound(eq(collectionId))).thenReturn(mockCollection);
+
+        // Perform the test
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> postService.createPost(collectionId, request));
+
+        // Exception message: Attribute 'Title' must have a minimum length of 2
+        System.out.println("Exception message: " + exception.getMessage());
+    }
+
 }
