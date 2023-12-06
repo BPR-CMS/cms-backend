@@ -54,7 +54,7 @@ class PostControllerTest {
         // Generate a valid token
         String userId = "ubcy8c";
         token = jwtTokenUtil.generateToken(userId);
-      // Return a mockUser
+        // Return a mockUser
         User mockUser = new User();
         when(userRepository.findByUserId(eq(userId))).thenReturn(mockUser);
 
@@ -73,7 +73,7 @@ class PostControllerTest {
     @Test
     void testCreatePostCollectionNotFound() throws Exception {
         // Mocking the behavior of postService.createPost() to throw NotFoundException
-      doThrow(new NotFoundException()).when(postService).createPost(anyString(), any());
+        doThrow(new NotFoundException()).when(postService).createPost(anyString(), any());
 
         String mockCollectionId = "nonExistentId";
 
@@ -140,7 +140,8 @@ class PostControllerTest {
         assertEquals(HttpStatus.OK, HttpStatus.valueOf(result.getResponse().getStatus()));
 
         ObjectMapper objectMapper = new ObjectMapper();
-        List<Post> actualPosts = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
+        List<Post> actualPosts = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+        });
         assertEquals(mockPosts.size(), actualPosts.size());
     }
 
