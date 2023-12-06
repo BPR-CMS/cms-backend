@@ -274,4 +274,97 @@ class PostServiceTest {
         System.out.println("Exception message: " + exception.getMessage());
     }
 
+    @Test
+    void createPost_InvalidData_ExceedsMaxValueForNumberAttribute() {
+        // Mocking data
+        String collectionId = "validCollectionId";
+        CreatePostRequest request = new CreatePostRequest();
+        Map<String, Object> attributes = new HashMap<>();
+        // Adding invalid data for Number attribute (max value is 50)
+        attributes.put("Age", 52);
+        request.setAttributes(attributes);
+
+
+        Collection mockCollection = new Collection();
+
+        // Mocking a collection with a valid attribute
+        NumberAttribute numberAttribute = new NumberAttribute();
+        numberAttribute.setName("Age");
+        numberAttribute.setContentType(ContentType.NUMBER);
+        numberAttribute.setFormatType(FormatType.INTEGER);
+        numberAttribute.setRequired(true);
+        numberAttribute.setMinimumValue(2);
+        numberAttribute.setMaximumValue(50);
+        mockCollection.setAttributes(Collections.singletonList(numberAttribute));
+        when(collectionService.findCollectionFailIfNotFound(eq(collectionId))).thenReturn(mockCollection);
+
+        // Perform the test
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> postService.createPost(collectionId, request));
+
+        // Exception message: Attribute 'Age' must have a maximum value of 50
+        System.out.println("Exception message: " + exception.getMessage());
+    }
+
+    @Test
+    void createPost_InvalidData_BelowMinValueForNumberAttribute() {
+        // Mocking data
+        String collectionId = "validCollectionId";
+        CreatePostRequest request = new CreatePostRequest();
+        Map<String, Object> attributes = new HashMap<>();
+        // Adding invalid data for Number attribute (min value is 2)
+        attributes.put("Age", 1);
+        request.setAttributes(attributes);
+
+
+        Collection mockCollection = new Collection();
+
+        // Mocking a collection with a valid attribute
+        NumberAttribute numberAttribute = new NumberAttribute();
+        numberAttribute.setName("Age");
+        numberAttribute.setContentType(ContentType.NUMBER);
+        numberAttribute.setFormatType(FormatType.INTEGER);
+        numberAttribute.setRequired(true);
+        numberAttribute.setMinimumValue(2);
+        numberAttribute.setMaximumValue(50);
+        mockCollection.setAttributes(Collections.singletonList(numberAttribute));
+        when(collectionService.findCollectionFailIfNotFound(eq(collectionId))).thenReturn(mockCollection);
+
+        // Perform the test
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> postService.createPost(collectionId, request));
+
+        // Exception message: Attribute 'Age' must have a minimum value of 2
+        System.out.println("Exception message: " + exception.getMessage());
+    }
+
+    @Test
+    void createPost_InvalidData_ForNumberAttribute() {
+        // Mocking data
+        String collectionId = "validCollectionId";
+        CreatePostRequest request = new CreatePostRequest();
+        Map<String, Object> attributes = new HashMap<>();
+        // Adding invalid data for Number attribute
+        attributes.put("Age", "invalid");
+        request.setAttributes(attributes);
+
+
+        Collection mockCollection = new Collection();
+
+        // Mocking a collection with a valid attribute
+        NumberAttribute numberAttribute = new NumberAttribute();
+        numberAttribute.setName("Age");
+        numberAttribute.setContentType(ContentType.NUMBER);
+        numberAttribute.setFormatType(FormatType.INTEGER);
+        numberAttribute.setRequired(true);
+        numberAttribute.setMinimumValue(2);
+        numberAttribute.setMaximumValue(50);
+        mockCollection.setAttributes(Collections.singletonList(numberAttribute));
+        when(collectionService.findCollectionFailIfNotFound(eq(collectionId))).thenReturn(mockCollection);
+
+        // Perform the test
+        Exception exception = assertThrows(Exception.class, () -> postService.createPost(collectionId, request));
+
+        System.out.println("Exception message: " + exception.getMessage());
+    }
+
+
 }
