@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@CrossOrigin(origins = {"http://localhost:3000", "https://6570f98423196400093added--candid-malasada-4886cc.netlify.app"})
+@CrossOrigin(origins = {"http://localhost:3000", "https://6571091abeba5e00087dc4d1--candid-malasada-4886cc.netlify.app"})
 @RestController
 @RequestMapping("/api/v1/invitations")
 public class InvitationController {
