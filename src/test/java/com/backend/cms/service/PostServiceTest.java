@@ -212,4 +212,66 @@ class PostServiceTest {
         System.out.println("Exception message: " + exception.getMessage());
     }
 
+    @Test
+    void createPost_InvalidData_ExceedsMaxLength_RichText_Attribute() {
+        // Mocking data
+        String collectionId = "validCollectionId";
+        CreatePostRequest request = new CreatePostRequest();
+        Map<String, Object> attributes = new HashMap<>();
+        // Adding invalid data for RichText attribute
+        attributes.put("Heading", "Length is too long, invalid data");
+        request.setAttributes(attributes);
+
+
+        Collection mockCollection = new Collection();
+
+        // Mocking a collection with a valid attribute
+        RichTextAttribute richTextAttribute = new RichTextAttribute();
+        richTextAttribute.setName("Heading");
+        richTextAttribute.setContentType(ContentType.RICHTEXT);
+        richTextAttribute.setRequired(true);
+        richTextAttribute.setMinimumLength(2);
+        richTextAttribute.setMaximumLength(10);
+
+        mockCollection.setAttributes(Collections.singletonList(richTextAttribute));
+        when(collectionService.findCollectionFailIfNotFound(eq(collectionId))).thenReturn(mockCollection);
+
+        // Perform the test
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> postService.createPost(collectionId, request));
+
+        // Exception message: Attribute 'Heading' must have a maximum length of 10
+        System.out.println("Exception message: " + exception.getMessage());
+    }
+
+    @Test
+    void createPost_InvalidData_BelowMinLength_RichText_Attribute() {
+        // Mocking data
+        String collectionId = "validCollectionId";
+        CreatePostRequest request = new CreatePostRequest();
+        Map<String, Object> attributes = new HashMap<>();
+        // Adding invalid data for RichText attribute
+        attributes.put("Heading", "L");
+        request.setAttributes(attributes);
+
+
+        Collection mockCollection = new Collection();
+
+        // Mocking a collection with a valid attribute
+        RichTextAttribute richTextAttribute = new RichTextAttribute();
+        richTextAttribute.setName("Heading");
+        richTextAttribute.setContentType(ContentType.RICHTEXT);
+        richTextAttribute.setRequired(true);
+        richTextAttribute.setMinimumLength(2);
+        richTextAttribute.setMaximumLength(10);
+
+        mockCollection.setAttributes(Collections.singletonList(richTextAttribute));
+        when(collectionService.findCollectionFailIfNotFound(eq(collectionId))).thenReturn(mockCollection);
+
+        // Perform the test
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> postService.createPost(collectionId, request));
+
+        // Exception message: Attribute 'Heading' must have a minimum length of 2
+        System.out.println("Exception message: " + exception.getMessage());
+    }
+
 }
