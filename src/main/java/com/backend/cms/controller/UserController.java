@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = {"http://localhost:3000", "https://cms-backend-production-0a2c.up.railway.app/"})
+@CrossOrigin(origins = {"http://localhost:3000", "https://6570f98423196400093added--candid-malasada-4886cc.netlify.app"})
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
