@@ -366,5 +366,175 @@ class PostServiceTest {
         System.out.println("Exception message: " + exception.getMessage());
     }
 
+    @Test
+    void createPost_InvalidDate_ForDateAttribute() {
+        // Mocking data
+        String collectionId = "validCollectionId";
+        CreatePostRequest request = new CreatePostRequest();
+        Map<String, Object> attributes = new HashMap<>();
+        // Adding invalid data for Date attribute
+        attributes.put("Date", "invalid");
+        request.setAttributes(attributes);
 
+
+        Collection mockCollection = new Collection();
+
+        // Mocking a collection with a valid attribute
+        DateAttribute dateAttribute = new DateAttribute();
+        dateAttribute.setName("Date");
+        dateAttribute.setContentType(ContentType.DATE);
+        dateAttribute.setDateType(DateType.DATE);
+        dateAttribute.setRequired(true);
+
+        mockCollection.setAttributes(Collections.singletonList(dateAttribute));
+        when(collectionService.findCollectionFailIfNotFound(eq(collectionId))).thenReturn(mockCollection);
+
+        // Perform the test
+        Exception exception = assertThrows(Exception.class, () -> postService.createPost(collectionId, request));
+
+        // Exception message: Attribute 'Date' must be a valid format.
+        System.out.println("Exception message: " + exception.getMessage());
+    }
+
+    @Test
+    void createPost_InvalidDateTime_ForDateAttribute() {
+        // Mocking data
+        String collectionId = "validCollectionId";
+        CreatePostRequest request = new CreatePostRequest();
+        Map<String, Object> attributes = new HashMap<>();
+        // Adding invalid data for Date attribute
+        attributes.put("DateTime", "invalid");
+        request.setAttributes(attributes);
+
+
+        Collection mockCollection = new Collection();
+
+        // Mocking a collection with a valid attribute
+        DateAttribute dateAttribute = new DateAttribute();
+        dateAttribute.setName("DateTime");
+        dateAttribute.setContentType(ContentType.DATE);
+        dateAttribute.setDateType(DateType.DATETIME);
+        dateAttribute.setRequired(true);
+
+        mockCollection.setAttributes(Collections.singletonList(dateAttribute));
+        when(collectionService.findCollectionFailIfNotFound(eq(collectionId))).thenReturn(mockCollection);
+
+        // Perform the test
+        Exception exception = assertThrows(Exception.class, () -> postService.createPost(collectionId, request));
+
+        // Exception message: Attribute 'DateTime' must be a valid format.
+        System.out.println("Exception message: " + exception.getMessage());
+    }
+
+    @Test
+    void createPost_InvalidTime_ForDateAttribute() {
+        // Mocking data
+        String collectionId = "validCollectionId";
+        CreatePostRequest request = new CreatePostRequest();
+        Map<String, Object> attributes = new HashMap<>();
+        // Adding invalid data for Date attribute
+        attributes.put("Time", "invalid");
+        request.setAttributes(attributes);
+
+
+        Collection mockCollection = new Collection();
+
+        // Mocking a collection with a valid attribute
+        DateAttribute dateAttribute = new DateAttribute();
+        dateAttribute.setName("Time");
+        dateAttribute.setContentType(ContentType.DATE);
+        dateAttribute.setDateType(DateType.TIME);
+        dateAttribute.setRequired(true);
+
+        mockCollection.setAttributes(Collections.singletonList(dateAttribute));
+        when(collectionService.findCollectionFailIfNotFound(eq(collectionId))).thenReturn(mockCollection);
+
+        // Perform the test
+        Exception exception = assertThrows(Exception.class, () -> postService.createPost(collectionId, request));
+
+        // Exception message: Attribute 'Time' must be a valid format.
+        System.out.println("Exception message: " + exception.getMessage());
+    }
+
+    @Test
+    void createPost_ValidDate_ForDateAttribute() {
+        // Mocking data
+        String collectionId = "validCollectionId";
+        CreatePostRequest request = new CreatePostRequest();
+        Map<String, Object> attributes = new HashMap<>();
+        // Adding valid data for Date attribute
+        attributes.put("Date", "2023-02-02");
+        request.setAttributes(attributes);
+
+
+        Collection mockCollection = new Collection();
+
+        // Mocking a collection with a valid attribute
+        DateAttribute dateAttribute = new DateAttribute();
+        dateAttribute.setName("Date");
+        dateAttribute.setContentType(ContentType.DATE);
+        dateAttribute.setDateType(DateType.DATE);
+        dateAttribute.setRequired(true);
+
+        mockCollection.setAttributes(Collections.singletonList(dateAttribute));
+        when(collectionService.findCollectionFailIfNotFound(eq(collectionId))).thenReturn(mockCollection);
+
+        // Perform the test
+        assertDoesNotThrow(() -> postService.createPost(collectionId, request));
+
+    }
+
+    @Test
+    void createPost_ValidDateTime_ForDateAttribute() {
+        // Mocking data
+        String collectionId = "validCollectionId";
+        CreatePostRequest request = new CreatePostRequest();
+        Map<String, Object> attributes = new HashMap<>();
+        // Adding valid data for Date attribute
+        attributes.put("DateTime", "2023-02-02T12:50");
+        request.setAttributes(attributes);
+
+
+        Collection mockCollection = new Collection();
+
+        // Mocking a collection with a valid attribute
+        DateAttribute dateAttribute = new DateAttribute();
+        dateAttribute.setName("DateTime");
+        dateAttribute.setContentType(ContentType.DATE);
+        dateAttribute.setDateType(DateType.DATETIME);
+        dateAttribute.setRequired(true);
+
+        mockCollection.setAttributes(Collections.singletonList(dateAttribute));
+        when(collectionService.findCollectionFailIfNotFound(eq(collectionId))).thenReturn(mockCollection);
+
+        // Perform the test
+        assertDoesNotThrow(() -> postService.createPost(collectionId, request));
+    }
+
+    @Test
+    void createPost_ValidTime_ForDateAttribute() {
+        // Mocking data
+        String collectionId = "validCollectionId";
+        CreatePostRequest request = new CreatePostRequest();
+        Map<String, Object> attributes = new HashMap<>();
+        // Adding valid data for Date attribute
+        attributes.put("Time", "12:50");
+        request.setAttributes(attributes);
+
+
+        Collection mockCollection = new Collection();
+
+        // Mocking a collection with a valid attribute
+        DateAttribute dateAttribute = new DateAttribute();
+        dateAttribute.setName("Time");
+        dateAttribute.setContentType(ContentType.DATE);
+        dateAttribute.setDateType(DateType.TIME);
+        dateAttribute.setRequired(true);
+
+        mockCollection.setAttributes(Collections.singletonList(dateAttribute));
+        when(collectionService.findCollectionFailIfNotFound(eq(collectionId))).thenReturn(mockCollection);
+
+        // Perform the test
+        assertDoesNotThrow(() -> postService.createPost(collectionId, request));
+    }
 }
