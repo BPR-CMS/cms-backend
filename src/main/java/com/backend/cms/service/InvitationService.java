@@ -45,7 +45,8 @@ public class InvitationService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(recipientEmail);
         message.setSubject("Invitation to CMS System");
-        message.setText("http://localhost:3000/sign-up?token=" + token);
+     //   message.setText("http://localhost:3000/sign-up?token=" + token);
+        message.setText("https://6571091abeba5e00087dc4d1--candid-malasada-4886cc.netlify.app/sign-up?token=" + token);
 
         javaMailSender.send(message);
     }
