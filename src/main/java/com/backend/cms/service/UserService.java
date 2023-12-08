@@ -66,10 +66,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User createUser(CreateUserRequest request, String token) {
+    public User createUser(CreateUserRequest request, String token, UserType userType) {
         User user = FieldCleaner.cleanNewUserFields(request.toUser());
         user.setUserId(findNewId());
-        user.setUserType(UserType.DEFAULT);
+        user.setUserType(userType);
         // Set the token from the invitation
         user.setToken(token);
 

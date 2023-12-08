@@ -2,6 +2,7 @@ package com.backend.cms.service;
 
 import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.model.User;
+import com.backend.cms.model.UserType;
 import com.backend.cms.repository.UserRepository;
 import com.backend.cms.request.CreateUserRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +25,20 @@ public class InvitationService {
 
     public void sendInvitation(CreateUserRequest request) {
         String recipientEmail = request.getEmail();
+        UserType userType = request.getUserType();
 
         User existingUser = userRepository.findByEmail(recipientEmail);
         if (existingUser != null) {
             throw new IllegalStateException("Invitation already sent");
         } else {
-            handleNewUserInvitation(request, recipientEmail);
+            handleNewUserInvitation(request, recipientEmail, userType);
         }
     }
 
-    private void handleNewUserInvitation(CreateUserRequest request, String recipientEmail) {
+    private void handleNewUserInvitation(CreateUserRequest request, String recipientEmail, UserType userType) {
         String token = generateUniqueToken();
 
-        userService.createUser(request, token);
+        userService.createUser(request, token, userType);
 
         sendEmail(recipientEmail, token);
     }
@@ -45,8 +47,8 @@ public class InvitationService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(recipientEmail);
         message.setSubject("Invitation to CMS System");
-     //   message.setText("http://localhost:3000/sign-up?token=" + token);
-        message.setText("https://candid-malasada-4886cc.netlify.app/sign-up?token=" + token);
+        message.setText("http://localhost:3000/sign-up?token=" + token);
+     //   message.setText("https://candid-malasada-4886cc.netlify.app/sign-up?token=" + token);
 
         javaMailSender.send(message);
     }
