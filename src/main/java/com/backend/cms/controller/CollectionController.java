@@ -4,6 +4,7 @@ import com.backend.cms.dto.CollectionDTO;
 import com.backend.cms.model.*;
 import com.backend.cms.request.CreateAttributeRequest;
 import com.backend.cms.request.CreateCollectionRequest;
+import com.backend.cms.service.AuthService;
 import com.backend.cms.service.CollectionService;
 import com.backend.cms.service.SecurityHelper;
 import org.slf4j.Logger;
@@ -28,12 +29,17 @@ public class CollectionController {
     @Autowired
     private SecurityHelper securityHelper;
 
+    @Autowired
+    private AuthService authService;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectionController.class);
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public CollectionDTO create(@Valid @RequestBody CreateCollectionRequest request) {
         LOGGER.info("Creating a collection entry with information: {}", request);
+
+        authService.checkIfUserIsAdminOrThrowException();
         Collection collection = request.toCollection();
         collection.setCollectionId(collectionService.findNewId());
         collection.setUserId(securityHelper.getCurrentUserId());
@@ -78,6 +84,8 @@ public class CollectionController {
             @PathVariable String collectionId, @Valid
     @RequestBody CreateAttributeRequest request) {
         LOGGER.info("Adding attribute to a collection entry with information: {}", request);
+
+        authService.checkIfUserIsAdminOrThrowException();
         Attribute attribute = collectionService.createAttributeInstance(request);
 
         if (attribute != null) {

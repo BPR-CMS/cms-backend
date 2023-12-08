@@ -4,6 +4,7 @@ import com.backend.cms.dto.PostDTO;
 import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.model.Post;
 import com.backend.cms.request.CreatePostRequest;
+import com.backend.cms.service.AuthService;
 import com.backend.cms.service.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,9 @@ public class PostController {
     @Autowired
     private PostService postService;
 
+    @Autowired
+    private AuthService authService;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(PostController.class);
 
     @RequestMapping(value = "/{collectionId}", method = RequestMethod.POST)
@@ -31,6 +35,7 @@ public class PostController {
             @PathVariable String collectionId,
             @Valid @RequestBody CreatePostRequest request) {
         try {
+            authService.checkIfUserIsEditorOrAdminOrThrowException();
             postService.createPost(collectionId, request);
             return ResponseEntity.ok().build();
         } catch (NotFoundException e) {

@@ -4,6 +4,7 @@ import com.backend.cms.dto.UserDTO;
 import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.model.User;
 import com.backend.cms.request.CreateUserRequest;
+import com.backend.cms.service.AuthService;
 import com.backend.cms.service.InvitationService;
 import com.backend.cms.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,14 @@ public class InvitationController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    private AuthService authService;
+
     @PostMapping("/send")
     public ResponseEntity<String> sendInvitationEmail(
             @Valid @RequestBody CreateUserRequest request) {
         try {
+            authService.checkIfUserIsAdminOrThrowException();
             invitationService.sendInvitation(request);
             return ResponseEntity.ok("Invitation sent successfully!");
         } catch (Exception e) {
@@ -38,6 +43,7 @@ public class InvitationController {
     @PostMapping("/resend/{userId}")
     public ResponseEntity<String> resendInvitation(@PathVariable String userId) {
         try {
+            authService.checkIfUserIsAdminOrThrowException();
             boolean isResent = invitationService.resendInvitation(userId);
             if (isResent) {
                 return ResponseEntity.ok("Invitation resent successfully!");
