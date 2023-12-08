@@ -43,7 +43,7 @@ public class UserController {
         return UserDTO.fromUser(user);
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public UserDTO update(@PathVariable("id") String id, @Valid @RequestBody UpdateUserRequest request) {
         LOGGER.info("Updating user entry with information: {}", request);
         authService.checkIfUserIsAdminOrThrowException();
