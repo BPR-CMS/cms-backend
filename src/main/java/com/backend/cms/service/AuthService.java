@@ -78,4 +78,17 @@ public class AuthService {
         }
     }
 
+    public void checkIfUserIsEditorOrAdminOrThrowException() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            UserType userType = userDetails.getUserType();
+
+            if (userType != UserType.EDITOR && userType != UserType.ADMIN) {
+                throw new AccessDeniedException("Unauthorized access");
+            }
+        } else {
+            throw new IllegalStateException("Unexpected principal type");
+        }
+    }
 }
