@@ -1,6 +1,7 @@
 package com.backend.cms.request;
 
 import com.backend.cms.model.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.Pattern;
 
 @Data
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateAttributeRequest {
     @NotBlank(message = "Name cannot be blank")
     @Pattern(regexp = "^[a-zA-Z\\s]{2,20}$", message = "Name must be 2-20 characters and contain only letters and spaces.")
@@ -19,13 +21,13 @@ public class CreateAttributeRequest {
     private ContentType contentType;
 
     @Min(value = 2, message = "Length must be at least 2.")
-    private Integer minimumLength; // Use Integer instead of int
+    private Integer minimumLength;
 
     @Max(value = 50, message = "Length cannot exceed 50.")
-    private Integer maximumLength; // Use Integer instead of int
+    private Integer maximumLength;
 
     @Max(value = 5000, message = "Length cannot exceed 5000.")
-    private Integer maximumRichTextLength; // Use Integer instead of int
+    private Integer maximumRichTextLength;
 
     private TextType textType;
     private MediaType mediaType;

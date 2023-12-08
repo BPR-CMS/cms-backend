@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TextAttribute extends Attribute {
-    private int minimumLength;
-    private int maximumLength;
+    private Integer minimumLength;
+    private Integer maximumLength;
     private boolean unique;
     private TextType textType;
     private String defaultValue;
 
-    public TextAttribute(String attributeId, String name, ContentType contentType, boolean required, int minimumLength, int maximumLength, boolean unique, TextType textType, String defaultValue) {
+    public TextAttribute(String attributeId, String name, ContentType contentType, boolean required, Integer minimumLength, Integer maximumLength, boolean unique, TextType textType, String defaultValue) {
         super(attributeId, name, contentType, required);
         this.minimumLength = minimumLength;
         this.maximumLength = maximumLength;

@@ -51,6 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/invitations/isTokenExpired/{userId}").permitAll()
                 .antMatchers("/api/v1/invitations/validateToken").permitAll()
                 .antMatchers("/api/v1/users/setPassword/{userId}").permitAll()
+                .antMatchers("/api/v1/posts/{collectionId}").authenticated()
                 .antMatchers(HttpMethod.GET, "/api/v1/users/**").authenticated() // Requires authentication
                 .antMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated() // Requires authentication
                 .antMatchers(HttpMethod.DELETE, "/api/v1/users/**").authenticated() // Requires authentication
@@ -66,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/*")
-                        .allowedOrigins("http://localhost:3000")
+                        .allowedOrigins("http://localhost:3000", "https://candid-malasada-4886cc.netlify.app")
                         .allowedMethods("")
                         .allowedHeaders("*")
                         .allowCredentials(true);

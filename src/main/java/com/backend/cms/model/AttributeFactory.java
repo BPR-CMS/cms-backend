@@ -1,11 +1,11 @@
 package com.backend.cms.model;
 
 public class AttributeFactory {
-    public static TextAttribute createTextAttribute(String attributeId, String name, ContentType contentType, boolean required, int minimumLength, int maximumLength, boolean unique, TextType type, String defaultValue) {
+    public static TextAttribute createTextAttribute(String attributeId, String name, ContentType contentType, boolean required, Integer minimumLength, Integer maximumLength, boolean unique, TextType type, String defaultValue) {
         return new TextAttribute(attributeId, name, contentType, required, minimumLength, maximumLength, unique, type, defaultValue);
     }
 
-    public static RichTextAttribute createRichTextAttribute(String attributeId, String name, ContentType contentType, boolean required, int minimumLength, int maximumLength, String defaultValue) {
+    public static RichTextAttribute createRichTextAttribute(String attributeId, String name, ContentType contentType, boolean required, Integer minimumLength, Integer maximumLength, String defaultValue) {
         return new RichTextAttribute(attributeId, name, contentType, required, minimumLength, maximumLength, defaultValue);
     }
 
@@ -13,7 +13,7 @@ public class AttributeFactory {
         return new MediaAttribute(attributeId, name, contentType, required, mediaType);
     }
 
-    public static NumberAttribute createNumberAttribute(String attributeId, String name, ContentType contentType, boolean required, FormatType formatType, String defaultValue, boolean unique, int minimumValue, int maximumValue) {
+    public static NumberAttribute createNumberAttribute(String attributeId, String name, ContentType contentType, boolean required, FormatType formatType, String defaultValue, boolean unique, Integer minimumValue, Integer maximumValue) {
         return new NumberAttribute(attributeId, name, contentType, required, formatType, defaultValue, unique, minimumValue, maximumValue);
     }
 

@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "https://candid-malasada-4886cc.netlify.app"})
 @RestController
 @RequestMapping("/api/v1/collections")
 public class CollectionController {
@@ -45,6 +45,13 @@ public class CollectionController {
     public CollectionDTO findById(@PathVariable("id") String id) {
         LOGGER.info("Finding collection entry with id: {}", id);
         Collection collection = collectionService.findCollectionFailIfNotFound(id);
+        return CollectionDTO.fromCollection(collection);
+    }
+
+    @RequestMapping(value = "name/{apiId}", method = RequestMethod.GET)
+    public CollectionDTO findByApiId(@PathVariable("apiId") String apiId) {
+        LOGGER.info("Finding collection entry with name (apiId): {}", apiId);
+        Collection collection = collectionService.findCollectionByNameFailIfNotFound(apiId);
         return CollectionDTO.fromCollection(collection);
     }
 

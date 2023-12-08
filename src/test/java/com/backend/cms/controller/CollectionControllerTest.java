@@ -92,7 +92,7 @@ class CollectionControllerTest {
 
     @Test
     void testCreateCollectionEmptyBody() throws Exception {
-        // Test case: With Authorization token and empty body (500 Internal Server Error)
+        // Test case: With Authorization token and empty body (400 Bad Request)
         MvcResult result = mvc.perform(
                         MockMvcRequestBuilders.post("/api/v1/collections")
                                 .header("Authorization", "Bearer " + token)

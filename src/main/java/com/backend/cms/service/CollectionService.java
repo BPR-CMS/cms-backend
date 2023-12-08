@@ -35,6 +35,13 @@ public class CollectionService {
         return collection;
     }
 
+    public Collection findCollectionByNameFailIfNotFound(String name) {
+        Collection collection = collectionRepository.findByName(name);
+        if (collection == null) throw new NotFoundException();
+
+        return collection;
+    }
+
     public String findNewId() {
         String id;
         do {
@@ -137,13 +144,13 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
         textAttribute.setName(FieldCleaner.cleanField(request.getName()));
         textAttribute.setTextType(request.getTextType());
         textAttribute.setMinimumLength(request.getMinimumLength() != null ? request.getMinimumLength() : 0);
-        textAttribute.setMaximumLength( request.getMaximumLength() != null ? request.getMaximumLength() : 0);
+        textAttribute.setMaximumLength( request.getMaximumLength() );
     }
 
     private void setRichTextAttributeProperties(RichTextAttribute richTextAttribute, CreateAttributeRequest request) {
         richTextAttribute.setName(FieldCleaner.cleanField(request.getName()));
         richTextAttribute.setMinimumLength(request.getMinimumLength() != null ? request.getMinimumLength() : 0);
-        richTextAttribute.setMaximumLength(request.getMaximumRichTextLength() != null ? request.getMaximumRichTextLength() : 0);
+        richTextAttribute.setMaximumLength(request.getMaximumRichTextLength());
     }
 
     private void setMediaAttributeProperties(MediaAttribute mediaAttribute, CreateAttributeRequest request) {
@@ -161,7 +168,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
         numberAttribute.setDefaultValue(request.getDefaultValue());
         numberAttribute.setUnique(request.isUnique());
         numberAttribute.setMinimumValue( request.getMinimumValue() != null ? request.getMinimumValue() : 0);
-        numberAttribute.setMaximumValue( request.getMaximumValue() != null ? request.getMaximumValue() : 0);
+        numberAttribute.setMaximumValue( request.getMaximumValue());
     }
 
     private void setDateAttributeProperties(DateAttribute dateAttribute, CreateAttributeRequest request) {
@@ -191,7 +198,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
                         contentType,
                         request.isRequired(),
                         request.getMinimumLength() != null ? request.getMinimumLength() : 0,
-                        request.getMaximumLength() != null ? request.getMaximumLength() : 0,
+                        request.getMaximumLength() ,
                         request.isUnique(),
                         textType,
                         request.getDefaultValue());
@@ -203,7 +210,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
                         contentType,
                         request.isRequired(),
                         request.getMinimumLength() != null ? request.getMinimumLength() : 0,
-                        request.getMaximumRichTextLength() != null ? request.getMaximumRichTextLength() : 0,
+                        request.getMaximumRichTextLength(),
                         request.getDefaultValue());
 
             case MEDIA:
@@ -232,7 +239,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
                         request.getDefaultValue(),
                         request.isUnique(),
                         request.getMinimumValue() != null ? request.getMinimumValue() : 0,
-                        request.getMaximumValue() != null ? request.getMaximumValue() : 0);
+                        request.getMaximumValue());
 
             case DATE:
                 DateType dateType = request.getDateType();
