@@ -1,10 +1,14 @@
 package com.backend.cms.security.jwt;
 
 import com.backend.cms.model.User;
+import com.backend.cms.model.UserType;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
 
@@ -17,7 +21,11 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        return null;
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getUserType().name()));
+
+        return authorities;
     }
 
     @Override
@@ -55,5 +63,9 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
 
         return true;
+    }
+
+    public UserType getUserType() {
+        return user.getUserType();
     }
 }
