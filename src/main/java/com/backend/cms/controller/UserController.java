@@ -56,6 +56,7 @@ public class UserController {
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public UserDTO delete(@PathVariable("id") String id) {
         LOGGER.info("Deleting user entry with id: {}", id);
+        authService.checkIfUserIsAdminOrThrowException();
         User user = userService.findUserFailIfNotFound(id);
         userRepository.delete(user);
         LOGGER.info("Deleted user entry with information: {}", user);
