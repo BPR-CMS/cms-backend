@@ -56,6 +56,7 @@ class PostControllerTest {
         token = jwtTokenUtil.generateToken(userId);
         // Return a mockUser
         User mockUser = new User();
+        mockUser.setUserType(UserType.ADMIN);
         when(userRepository.findByUserId(eq(userId))).thenReturn(mockUser);
 
 

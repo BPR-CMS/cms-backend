@@ -3,6 +3,7 @@ package com.backend.cms.controller;
 
 import com.backend.cms.model.AccountStatus;
 import com.backend.cms.model.User;
+import com.backend.cms.model.UserType;
 import com.backend.cms.repository.UserRepository;
 import com.backend.cms.request.LoginRequest;
 import com.backend.cms.request.SetPasswordRequest;
@@ -53,6 +54,7 @@ class UserControllerTest {
 
         // Defining the behavior of userRepository.findByUserId() to return a mockUser
         User mockUser = new User();
+        mockUser.setUserType(UserType.ADMIN);
         when(userRepository.findByUserId(eq(userId))).thenReturn(mockUser);
 
         // Perform the GET request
