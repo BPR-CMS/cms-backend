@@ -56,9 +56,6 @@ public class UserService {
         user.setEmail(FieldCleaner.cleanField(request.getEmail()));
         user.setUserType(request.getUserType());
 
-      //  String password = request.getPassword();
-      //  user.setPassword(encryptPassword(FieldCleaner.cleanField(password)));
-
         // Save the updated user
         save(user);
     }
