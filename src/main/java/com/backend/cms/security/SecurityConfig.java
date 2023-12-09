@@ -55,6 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/v1/users/**").authenticated() // Requires authentication
                 .antMatchers(HttpMethod.PUT, "/api/v1/users/**").authenticated() // Requires authentication
                 .antMatchers(HttpMethod.DELETE, "/api/v1/users/**").authenticated() // Requires authentication
+                .antMatchers(HttpMethod.PATCH, "/api/v1/users/**").authenticated() // Requires authentication
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

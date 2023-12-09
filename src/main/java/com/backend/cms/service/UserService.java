@@ -54,9 +54,7 @@ public class UserService {
         user.setFirstName(FieldCleaner.cleanField(request.getFirstName()));
         user.setLastName(FieldCleaner.cleanField(request.getLastName()));
         user.setEmail(FieldCleaner.cleanField(request.getEmail()));
-
-        String password = request.getPassword();
-        user.setPassword(encryptPassword(FieldCleaner.cleanField(password)));
+        user.setUserType(request.getUserType());
 
         // Save the updated user
         save(user);
@@ -66,10 +64,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User createUser(CreateUserRequest request, String token) {
+    public User createUser(CreateUserRequest request, String token, UserType userType) {
         User user = FieldCleaner.cleanNewUserFields(request.toUser());
         user.setUserId(findNewId());
-        user.setUserType(UserType.DEFAULT);
+        user.setUserType(userType);
         // Set the token from the invitation
         user.setToken(token);
 

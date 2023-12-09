@@ -1,5 +1,6 @@
 package com.backend.cms.request;
 
+import com.backend.cms.model.UserType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,8 +20,7 @@ public class UpdateUserRequest {
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$", message = "Email must be valid.")
     private String email;
 
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{8,16}$", message = "Password must be 8-16 characters and meet special criteria ")
-    private String password;
+    private UserType userType;
 
     public void setFirstName(String firstName) {
         this.firstName = firstName != null ? firstName.trim() : null;
@@ -34,7 +34,4 @@ public class UpdateUserRequest {
         this.email = email != null ? email.trim() : null;
     }
 
-    public void setPassword(String password) {
-        this.password = password != null ? password.trim() : null;
-    }
 }
