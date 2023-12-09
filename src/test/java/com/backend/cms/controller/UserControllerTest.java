@@ -49,8 +49,8 @@ class UserControllerTest {
     void testFindUserById() throws Exception {
         String userId = "ubcy8c";
 
-        // Generate a valid token
-        String token = jwtTokenUtil.generateToken(userId);
+        UserType userRole = UserType.ADMIN;
+       String token = jwtTokenUtil.generateToken(userId, userRole);
 
         // Defining the behavior of userRepository.findByUserId() to return a mockUser
         User mockUser = new User();
@@ -81,8 +81,8 @@ class UserControllerTest {
     void testFindUserById_NotFound() throws Exception {
         String userId = "ubcy8c";
 
-        // Generate a valid token
-        String token = jwtTokenUtil.generateToken(userId);
+        UserType userRole = UserType.ADMIN;
+        String token = jwtTokenUtil.generateToken(userId, userRole);
 
         // Defining the behavior of userRepository.findByUserId()
         when(userRepository.findByUserId(eq(userId))).thenReturn(null);

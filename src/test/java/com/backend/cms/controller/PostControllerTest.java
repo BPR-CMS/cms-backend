@@ -53,7 +53,8 @@ class PostControllerTest {
 
         // Generate a valid token
         String userId = "ubcy8c";
-        token = jwtTokenUtil.generateToken(userId);
+        UserType userRole = UserType.ADMIN;
+        token = jwtTokenUtil.generateToken(userId, userRole);
         // Return a mockUser
         User mockUser = new User();
         mockUser.setUserType(UserType.ADMIN);

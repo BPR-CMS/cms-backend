@@ -47,7 +47,7 @@ public class AuthService {
             throw new UnauthorizedException();
         }
 //         Generate a JWT token
-        return jwtTokenUtil.generateToken(user.getUserId());
+        return jwtTokenUtil.generateToken(user.getUserId(), user.getUserType());
     }
 
     public void checkIfUserIsAdminOrThrowException() {

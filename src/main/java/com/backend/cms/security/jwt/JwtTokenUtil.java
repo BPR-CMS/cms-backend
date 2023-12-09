@@ -1,5 +1,6 @@
 package com.backend.cms.security.jwt;
 
+import com.backend.cms.model.UserType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -23,9 +24,10 @@ public class JwtTokenUtil {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
-    public String generateToken(String userId) {
+    public String generateToken(String userId, UserType userRole) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("_id", userId);
+        claims.put("_userRole", userRole);
 
         return Jwts.builder()
                 .setClaims(claims)
