@@ -3,6 +3,7 @@ package com.backend.cms.controller;
 import com.backend.cms.dto.PostDTO;
 import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.model.Post;
+import com.backend.cms.repository.PostRepository;
 import com.backend.cms.request.CreatePostRequest;
 import com.backend.cms.request.EditPostRequest;
 import com.backend.cms.service.AuthService;
@@ -28,6 +29,8 @@ public class PostController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private PostRepository postRepository;
     private static final Logger LOGGER = LoggerFactory.getLogger(PostController.class);
 
     @RequestMapping(value = "/{collectionId}", method = RequestMethod.POST)
@@ -81,6 +84,16 @@ public class PostController {
             LOGGER.error("Error updating post: {}", e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    public PostDTO delete(@PathVariable("id") String id) {
+        LOGGER.info("Deleting post entry with id: {}", id);
+        authService.checkIfUserIsEditorOrAdminOrThrowException();
+        Post post = postService.findPostFailIfNotFound(id);
+        postRepository.delete(post);
+        LOGGER.info("Deleted post entry with information: {}", post);
+        return PostDTO.fromPost(post);
     }
 }
 
