@@ -4,6 +4,7 @@ import com.backend.cms.dto.PostDTO;
 import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.model.Post;
 import com.backend.cms.request.CreatePostRequest;
+import com.backend.cms.request.EditPostRequest;
 import com.backend.cms.service.AuthService;
 import com.backend.cms.service.PostService;
 import org.slf4j.Logger;
@@ -63,6 +64,23 @@ public class PostController {
         LOGGER.info("Finding post entry with id: {}", id);
         Post post = postService.findPostFailIfNotFound(id);
         return PostDTO.fromPost(post);
+    }
+
+    @RequestMapping(value = "/{collectionId}/{postId}", method = RequestMethod.PATCH)
+    public ResponseEntity<?> updatePost(@PathVariable String collectionId,
+                                        @PathVariable String postId,
+                                        @Valid @RequestBody EditPostRequest request) {
+        try {
+            authService.checkIfUserIsEditorOrAdminOrThrowException();
+            postService.updatePost(collectionId, postId, request);
+            return ResponseEntity.ok().build();
+        } catch (NotFoundException e) {
+            LOGGER.error("Post or Collection not found: {}", e.getMessage());
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            LOGGER.error("Error updating post: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
 
