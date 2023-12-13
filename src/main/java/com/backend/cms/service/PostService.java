@@ -168,10 +168,10 @@ public class PostService {
         if (maximumLength != null && textValue.length() > maximumLength) {
             throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must have a maximum length of " + maximumLength);
         }
-        String regexPattern = "^(?=.*[a-zA-Z])[a-zA-Z0-9\\s.,!?]*$";
+        String regexPattern = "^(?=.*[a-zA-Z])[a-zA-Z0-9\\s.,!?:-]*$";
 
         if (textValue.length() > 0 && !textValue.matches(regexPattern)) {
-            throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must match the pattern: " + regexPattern);
+            throw new IllegalArgumentException("Attribute '" + collectionAttribute.getName() + "' must match a certain pattern ");
         }
 
         if (collectionAttribute.isUnique() && isAttributeValueNotUnique(collectionId, collectionAttribute.getName(), textValue)) {

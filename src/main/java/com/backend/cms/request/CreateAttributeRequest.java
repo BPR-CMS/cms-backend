@@ -30,7 +30,6 @@ public class CreateAttributeRequest {
     private Integer maximumRichTextLength;
 
     private TextType textType;
-    private MediaType mediaType;
     private boolean required;
 
     private FormatType formatType;
