@@ -5,6 +5,7 @@ import com.backend.cms.model.*;
 import com.backend.cms.model.Collection;
 import com.backend.cms.repository.PostRepository;
 import com.backend.cms.request.CreatePostRequest;
+import com.backend.cms.request.EditPostRequest;
 import com.backend.cms.utils.Generator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -298,4 +299,18 @@ public class PostService {
     private void saveNewPost(Post newPost) {
         postRepository.save(newPost);
     }
+
+    public void updatePost(String collectionId, String postId, EditPostRequest request) {
+        Post existingPost = findPostFailIfNotFound(postId);
+        Collection collection = collectionService.findCollectionFailIfNotFound(collectionId);
+        Map<String, Object> updatedAttributes = request.getAttributes();
+        if (updatedAttributes != null && !updatedAttributes.isEmpty()) {
+
+            validatePostAttributes(collectionId, collection.getAttributes(), request.getAttributes());
+            existingPost.getAttributes().putAll(updatedAttributes);
+        }
+
+        saveNewPost(existingPost);
+    }
+
 }

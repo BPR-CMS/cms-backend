@@ -58,10 +58,12 @@ class CollectionControllerTest {
 
         // Generate a valid token
         String userId = "ubcy8c";
-        token = jwtTokenUtil.generateToken(userId);
+        UserType userRole = UserType.ADMIN;
+        token = jwtTokenUtil.generateToken(userId, userRole);
 
         // Defining the behavior of userRepository.findByUserId() to return a mockUser
         User mockUser = new User();
+        mockUser.setUserType(UserType.ADMIN);
         when(userRepository.findByUserId(eq(userId))).thenReturn(mockUser);
 
         // Set properties for the request object

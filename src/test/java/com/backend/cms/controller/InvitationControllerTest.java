@@ -2,6 +2,7 @@ package com.backend.cms.controller;
 
 import com.backend.cms.exceptions.NotFoundException;
 import com.backend.cms.model.User;
+import com.backend.cms.model.UserType;
 import com.backend.cms.repository.UserRepository;
 import com.backend.cms.request.CreateUserRequest;
 import com.backend.cms.security.jwt.JwtTokenUtil;
@@ -53,9 +54,11 @@ class InvitationControllerTest {
 
         // Generate a valid token
         String userId = "ubcy8c";
-        token = jwtTokenUtil.generateToken(userId);
+        UserType userRole = UserType.ADMIN;
+        token = jwtTokenUtil.generateToken(userId, userRole);
         // Defining the behavior to return a mockUser
         User mockUser = new User();
+        mockUser.setUserType(UserType.ADMIN);
         when(userRepository.findByUserId(eq(userId))).thenReturn(mockUser);
     }
 
