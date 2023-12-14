@@ -1,0 +1,6 @@
+
+[qgtunnel.0]
+accept = "127.0.0.1:8080"
+connect = "cms-testdb.m1v5sqh.mongodb.net:"
+encrypted = false
+transparent = false
