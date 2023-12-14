@@ -10,7 +10,6 @@ import com.backend.cms.service.SecurityHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +17,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = {"http://localhost:3000", "https://candid-malasada-4886cc.netlify.app"})
+@CrossOrigin(origins = {"http://localhost:3000", "https://webease-frontend.vercel.app"})
 @RestController
 @RequestMapping("/api/v1/collections")
 public class CollectionController {

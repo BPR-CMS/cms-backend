@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:3000", "https://candid-malasada-4886cc.netlify.app"})
+@CrossOrigin(origins = {"http://localhost:3000", "https://webease-frontend.vercel.app"})
 @RestController
 @RequestMapping("/api/v1/posts")
 public class PostController {
