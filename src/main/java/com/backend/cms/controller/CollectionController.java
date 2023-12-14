@@ -35,7 +35,6 @@ public class CollectionController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectionController.class);
 
     @RequestMapping(method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
     public CollectionDTO create(@Valid @RequestBody CreateCollectionRequest request) {
         LOGGER.info("Creating a collection entry with information: {}", request);
 
@@ -79,7 +78,6 @@ public class CollectionController {
     }
 
     @RequestMapping(value = "/{collectionId}/attributes", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Attribute> addAttribute(
             @PathVariable String collectionId, @Valid
     @RequestBody CreateAttributeRequest request) {

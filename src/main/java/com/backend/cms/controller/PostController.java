@@ -34,7 +34,6 @@ public class PostController {
     private static final Logger LOGGER = LoggerFactory.getLogger(PostController.class);
 
     @RequestMapping(value = "/{collectionId}", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> createPost(
             @PathVariable String collectionId,
             @Valid @RequestBody CreatePostRequest request) {

@@ -25,8 +25,6 @@ public class CollectionService {
     @Autowired
     private CollectionRepository collectionRepository;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CollectionService.class);
-
 
     public Collection findCollectionFailIfNotFound(String id) {
         Collection collection = collectionRepository.findByCollectionId(id);
@@ -120,14 +118,12 @@ public class CollectionService {
         Optional<Collection> optionalCollection = Optional.ofNullable(collectionRepository.findByCollectionId(collectionId));
         if (optionalCollection.isPresent()) {
             Collection collection = optionalCollection.get();
-checkForDuplicateAttributeName(collectionId,attribute.getName());
+            checkForDuplicateAttributeName(collectionId, attribute.getName());
             // Set attribute-specific properties based on ContentType
             if (attribute instanceof TextAttribute && request.getContentType() == ContentType.TEXT) {
                 setTextAttributeProperties((TextAttribute) attribute, request);
             } else if (attribute instanceof RichTextAttribute && request.getContentType() == ContentType.RICHTEXT) {
                 setRichTextAttributeProperties((RichTextAttribute) attribute, request);
-            } else if (attribute instanceof MediaAttribute && request.getContentType() == ContentType.MEDIA) {
-                setMediaAttributeProperties((MediaAttribute) attribute, request);
             } else if (attribute instanceof NumberAttribute && request.getContentType() == ContentType.NUMBER) {
                 setNumberAttributeProperties((NumberAttribute) attribute, request);
             } else if (attribute instanceof DateAttribute && request.getContentType() == ContentType.DATE) {
@@ -144,20 +140,13 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
         textAttribute.setName(FieldCleaner.cleanField(request.getName()));
         textAttribute.setTextType(request.getTextType());
         textAttribute.setMinimumLength(request.getMinimumLength() != null ? request.getMinimumLength() : 0);
-        textAttribute.setMaximumLength( request.getMaximumLength() );
+        textAttribute.setMaximumLength(request.getMaximumLength());
     }
 
     private void setRichTextAttributeProperties(RichTextAttribute richTextAttribute, CreateAttributeRequest request) {
         richTextAttribute.setName(FieldCleaner.cleanField(request.getName()));
         richTextAttribute.setMinimumLength(request.getMinimumLength() != null ? request.getMinimumLength() : 0);
         richTextAttribute.setMaximumLength(request.getMaximumRichTextLength());
-    }
-
-    private void setMediaAttributeProperties(MediaAttribute mediaAttribute, CreateAttributeRequest request) {
-        mediaAttribute.setName(FieldCleaner.cleanField(request.getName()));
-        mediaAttribute.setContentType(request.getContentType());
-        mediaAttribute.setRequired(request.isRequired());
-        mediaAttribute.setMediaType(request.getMediaType());
     }
 
     private void setNumberAttributeProperties(NumberAttribute numberAttribute, CreateAttributeRequest request) {
@@ -167,8 +156,8 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
         numberAttribute.setFormatType(request.getFormatType());
         numberAttribute.setDefaultValue(request.getDefaultValue());
         numberAttribute.setUnique(request.isUnique());
-        numberAttribute.setMinimumValue( request.getMinimumValue() != null ? request.getMinimumValue() : 0);
-        numberAttribute.setMaximumValue( request.getMaximumValue());
+        numberAttribute.setMinimumValue(request.getMinimumValue() != null ? request.getMinimumValue() : 0);
+        numberAttribute.setMaximumValue(request.getMaximumValue());
     }
 
     private void setDateAttributeProperties(DateAttribute dateAttribute, CreateAttributeRequest request) {
@@ -198,7 +187,7 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
                         contentType,
                         request.isRequired(),
                         request.getMinimumLength() != null ? request.getMinimumLength() : 0,
-                        request.getMaximumLength() ,
+                        request.getMaximumLength(),
                         request.isUnique(),
                         textType,
                         request.getDefaultValue());
@@ -212,18 +201,6 @@ checkForDuplicateAttributeName(collectionId,attribute.getName());
                         request.getMinimumLength() != null ? request.getMinimumLength() : 0,
                         request.getMaximumRichTextLength(),
                         request.getDefaultValue());
-
-            case MEDIA:
-                MediaType mediaType = request.getMediaType();
-                if (mediaType == null) {
-                    throw new IllegalArgumentException("mediaType is required for MediaAttribute");
-                }
-                return AttributeFactory.createMediaAttribute(
-                        Generator.generateId("a"),
-                        request.getName(),
-                        contentType,
-                        request.isRequired(),
-                        mediaType);
 
             case NUMBER:
                 FormatType formatType = request.getFormatType();
