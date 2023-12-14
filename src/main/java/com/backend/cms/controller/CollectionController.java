@@ -78,7 +78,6 @@ public class CollectionController {
     }
 
     @RequestMapping(value = "/{collectionId}/attributes", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Attribute> addAttribute(
             @PathVariable String collectionId, @Valid
     @RequestBody CreateAttributeRequest request) {

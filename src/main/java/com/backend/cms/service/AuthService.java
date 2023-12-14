@@ -52,8 +52,7 @@ public class AuthService {
 
     public void checkIfUserIsAdminOrThrowException() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.getPrincipal() instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        if (authentication.getPrincipal() instanceof CustomUserDetails userDetails) {
             UserType userType = userDetails.getUserType();
 
             if (userType != UserType.ADMIN) {
